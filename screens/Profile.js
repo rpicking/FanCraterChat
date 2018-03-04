@@ -110,4 +110,4 @@ function mapStateToProps({ profile }) {
 export default connect(
     mapStateToProps, 
     { initProfile, getCurrentUserInfo, updateProfile }
-)(Profile);
+)(Profile); 

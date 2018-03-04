@@ -89,4 +89,4 @@ function mapStateToProps({ login }) {
     return { error, user };
 };
 
-export default connect(mapStateToProps, { sendbirdLogin })(Login);
+export default connect(mapStateToProps, { sendbirdLogin })(Login); 

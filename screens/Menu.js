@@ -34,12 +34,12 @@ class Menu extends Component {
     }
 
     _onProfileButtonPress = () => {
-        // TODO: Profile screen
+        this.props.navigation.navigate('Profile');
         
     }
 
     _onOpenChannelPress = () => {
-        // TODO: OpenChannel screen
+        this.props.navigation.navigate('OpenChannel');
     }
 
     _onGroupChannelPress = () => {
@@ -68,7 +68,7 @@ class Menu extends Component {
                     backgroundColor='#fff'
                     color='#6e5baa'
                     icon={{name: 'slack', type: 'font-awesome' , color: '#6e5baa', size: 16}}
-                    title='Open Channel' 
+                    title='FanCrater Chat' 
                     onPress={this._onOpenChannelPress}
                 />
                 <Button
