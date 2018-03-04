@@ -1,7 +1,8 @@
 export { 
-    FormLabel,
-    FormInput, 
-    FormValidationMessage, 
-    Button, 
-    Avatar
-} from 'react-native-elements';
+        FormLabel,
+        FormInput, 
+        FormValidationMessage, 
+        Button,
+        ListItem, 
+        Avatar
+    } from 'react-native-elements';
