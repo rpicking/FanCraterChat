@@ -25,7 +25,7 @@ class Login extends Component {
             const resetAction = NavigationActions.reset({
                 index: 0,
                 actions: [
-                    NavigationActions.navigate({ routeName: 'Menu' })
+                    NavigationActions.navigate({ routeName: 'Map' })
                 ]
             })
             this.setState({ userId: '', password: '' }, () => {
