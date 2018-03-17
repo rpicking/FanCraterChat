@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, Image } from 'react-native';
 import { connect } from 'react-redux';
 import { NavigationActions } from 'react-navigation';
 import { sendbirdLogin } from '../actions';
 import { FormLabel, FormInput, FormValidationMessage, Button } from '../components';
+import LinearGradient from 'react-native-linear-gradient';
 
 class Login extends Component {
     static navigationOptions = {
@@ -49,6 +50,10 @@ class Login extends Component {
     render() {
         return (
             <View style={{backgroundColor: '#fff', flex: 1}}>
+                <View style={styles.logoContainer}>
+                    <Image style={styles.logo} source={require('../images/fancrater.png')} />
+
+                </View>
                 <View style={styles.containerStyle}>
                     <FormLabel>User ID</FormLabel>
                     <FormInput
@@ -65,7 +70,7 @@ class Login extends Component {
                 </View>
                 <View style={styles.containerStyle}>
                     <Button
-                        buttonStyle={{backgroundColor: '#2096f3'}}
+                        buttonStyle={{backgroundColor: '#01bacc'}}
                         title='Connect' 
                         onPress={this._onButtonPress}
                     />
@@ -81,6 +86,15 @@ class Login extends Component {
 const styles = {
     containerStyle: {
         marginTop: 10
+    }, 
+    logoContainer: {
+        marginTop: 50,
+        alignItems: 'center', 
+        justifyContent: 'center'
+    },
+    logo: {
+        width: 300,
+        height: 70
     }
 }
 
@@ -89,4 +103,4 @@ function mapStateToProps({ login }) {
     return { error, user };
 };
 
-export default connect(mapStateToProps, { sendbirdLogin })(Login); 
+export default connect(mapStateToProps, { sendbirdLogin })(Login);
