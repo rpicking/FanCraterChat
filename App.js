@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react';//Hello
 import { StackNavigator } from 'react-navigation';
 
 import { Provider } from 'react-redux';
