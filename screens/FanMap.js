@@ -1,12 +1,17 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import { NavigationActions } from 'react-navigation';
 
 import { Constants, Location, Permissions } from 'expo';
 import MapView from 'react-native-maps';
 
-class Map extends Component {
+import { Container,Button, Icon } from "native-base";
+
+//const { StyleSheet, Dimensions } = React;
+const { width, height } = Dimensions.get("window");
+
+class FanMap extends Component {
     static navigationOptions = {
         title: 'MAP'
     }
@@ -22,6 +27,7 @@ class Map extends Component {
 
     componentWillMount() {
         this._getLocationAsync();
+
     }
 
     componentWillReceiveProps(props) {
@@ -54,25 +60,44 @@ class Map extends Component {
 
     render() {
         return ( 
-            <MapView style = {{ flex: 1 }}
-                region = {this.state.location}
-            />
+            <View>
+                <MapView style = {styles.map}
+                    region = {this.state.location}
+                    
+                />
+                <Button
+                    transparent
+                    large
+                    style={styles.button}
+                    onPress={() => this.props.navigation.navigate("DrawerOpen")}
+                    >
+                    <Icon
+                        name={"menu"}
+                        type={"Entypo"}
+                        style={{ color: "#777", fontSize: 32, width: 30 }}
+                    />
+                </Button>
+            </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingTop: Constants.statusBarHeight,
-        backgroundColor: '#ecf0f1',
+    map: {
+        width: width - 1,
+        height: height,
+        zIndex: -1
     },
+    button: { 
+        position: 'absolute',
+        alignSelf: "flex-end",
+        marginTop: 20,
+        zIndex: 10
+    }
 });
 
 function mapStateToProps() {
     return { };
 };
 
-export default connect(mapStateToProps, { })(Map);
+export default connect(mapStateToProps, { })(FanMap);
