@@ -1,68 +1,83 @@
+import Auth0 from 'react-native-auth0';
+const auth0 = new Auth0({ domain: 'rpickingemu.auth0.com', clientId: '***REMOVED***' });
+
+
+
+
 import React, { Component } from 'react';
-import { StackNavigator, DrawerNavigator } from 'react-navigation';
+import {
+    Platform,
+    StyleSheet,
+    Text,
+    View
+} from 'react-native';
 
-import { Provider } from 'react-redux';
-import store from './store';
+const instructions = Platform.select({
+    ios: 'Press Cmd+R to reload,\n' +
+    'Cmd+D or shake for dev menu',
+    android: 'Double tap R on your keyboard to reload,\n' +
+    'Shake or press menu button for dev menu',
+});
 
-import Login from './screens/Login'
-import Menu from './screens/Menu'
-import FanMap from './screens/FanMap'
-import Profile from './screens/Profile'
-import OpenChannel from './screens/OpenChannel'
+auth0
+    .webAuth
+    .authorize({scope: 'openid offline_access profile update:current_user_metadata', audience: 'https://rpickingemu.auth0.com/api/v2/'})
+    .then(function(credentials) {
+        console.log(credentials);
+        let access = credentials.accessToken;
+        
 
-import { Root } from "native-base";
-import SideBar from "./screens/sidebar";
+        auth0
+            .auth
+            .userInfo({token: credentials.accessToken})
+            .then(function(response) {
+                console.log(response);
+                auth0
+                    .users(credentials.accessToken)
+                    .patchUser({id: response.sub, metadata: {'test': 'working'}})
+                    .then(console.log)
+                    .catch(console.error);
+            })
+            .catch(console.error);
+    })
+    .catch(error => console.log(error));
 
-
-const Drawer = DrawerNavigator(
-    {
-        Login: { screen: Login },
-        FanMap: { screen: FanMap },
-        Profile: { screen: Profile },
-        OpenChannel: { screen: OpenChannel },
-        Menu: { screen: Menu },
-    },
-    {
-        initialRouteName: "FanMap",
-        contentOptions: {
-        activeTintColor: "#e91e63"
-      },
-      contentComponent: props => <SideBar {...props} />
-    }
-);
-
-const MainNavigator = StackNavigator({
-        Drawer: { screen: Drawer },
-    },
-    {
-        initialRouteName: "Drawer",
-        headerMode: "none"
-    }
-);
-
-class App extends Component {
-    state = {
-        fontLoaded: false,
-    };
-
-    async componentWillMount() {
-        await Expo.Font.loadAsync({
-          'Roboto': require('native-base/Fonts/Roboto.ttf'),
-          'Roboto_medium': require('native-base/Fonts/Roboto_medium.ttf'),
-        });
-        this.setState({ fontLoaded: true });
-    }
-
+type Props = {};
+export default class App extends Component<Props> {
+     
     render() {
-        if (!this.state.fontLoaded) {
-            return <Expo.AppLoading />;
-        }
-        return (
-            <Provider store={store}>
-                <MainNavigator />
-            </Provider>
-        )
+    return (
+        <View style={styles.container}>
+        <Text style={styles.welcome}>
+            Welcome to React Native!
+        </Text>
+        <Text style={styles.instructions}>
+            To get started, edit App.js
+        </Text>
+        <Text style={styles.instructions}>
+            {instructions}
+        </Text>
+        </View>
+    );
     }
 }
 
-export default App; 
+const styles = StyleSheet.create({
+    container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
+    },
+    welcome: {
+    fontSize: 20,
+    textAlign: 'center',
+    margin: 10,
+    },
+    instructions: {
+    textAlign: 'center',
+    color: '#333333',
+    marginBottom: 5,
+    },
+});
+    
