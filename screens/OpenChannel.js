@@ -53,7 +53,14 @@ class OpenChannel extends Component {
     }
     
     _onListItemPress = (channelUrl) => {
-        // TODO: enter channel
+        sb.OpenChannel.createChannel(name, coverUrl, data, function(createdChannel, error){
+            if (error) {
+                console.error(error);
+                return;
+            }
+            // onCreated
+            console.log(createdChannel);
+        });
     }
 
     _handleScroll = (e) => {
