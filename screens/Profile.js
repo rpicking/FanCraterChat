@@ -39,7 +39,7 @@ class Profile extends Component {
     componentDidMount() {
         this.props.navigation.setParams({ handleSave: this._onSaveButtonPress })
         this.props.initProfile();
-        this.props.getCurrentUserInfo();
+        //this.props.getCurrentUserInfo();
     }
 
     componentWillReceiveProps(props) {

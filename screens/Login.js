@@ -25,7 +25,7 @@ class Login extends Component {
             const resetAction = NavigationActions.reset({
                 index: 0,
                 actions: [
-                    NavigationActions.navigate({ routeName: 'Map' })
+                    this.props.navigation.navigate({ routeName: 'FanMap' })
                 ]
             })
             this.setState({ userId: '', password: '' }, () => {
@@ -51,7 +51,7 @@ class Login extends Component {
         return (
             <View style={{backgroundColor: '#fff', flex: 1}}>
                 <View style={styles.logoContainer}>
-                    <Image style={styles.logo} source={require('../images/fancrater.png')} />
+                    <Image style={styles.logo} source={require('../images/logo.png')} />
 
                 </View>
                 <View style={styles.containerStyle}>
