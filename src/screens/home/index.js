@@ -2,13 +2,15 @@ import React, { Component } from "react";
 import { Image, ImageBackground, View, StatusBar } from "react-native";
 import { Container, Button, H3, Text } from "native-base";
 
-import { launchLogin } from "../../actions/accountActions";
+import { launchLogin, getMetadata } from "../../actions/accountActions";
 
 import styles from "./styles";
 
 const launchscreenBg = require("../../../assets/splashscreen.png");
 const launchscreenLogo = require("../../../assets/logo.png");
+
 launchLogin();
+//getMetadata();
 
 class Home extends Component {
     render() {
