@@ -1,18 +1,17 @@
-import React, { Component } from 'react';
-import { StackNavigator, DrawerNavigator } from 'react-navigation';
+import React, { Component } from "react";
+import { StackNavigator, DrawerNavigator } from "react-navigation";
 
-import { Provider } from 'react-redux';
-import store from './store';
+import { Provider } from "react-redux";
+import store from "./store";
 
-import Login from './screens/Login'
-import Menu from './screens/Menu'
-import FanMap from './screens/FanMap'
-import Profile from './screens/Profile'
-import OpenChannel from './screens/OpenChannel'
+import Login from "./screens/Login";
+import Menu from "./screens/Menu";
+import FanMap from "./screens/FanMap";
+import Profile from "./screens/Profile";
+import OpenChannel from "./screens/OpenChannel";
 
 import { Root } from "native-base";
 import SideBar from "./screens/sidebar";
-
 
 const Drawer = DrawerNavigator(
     {
@@ -20,19 +19,21 @@ const Drawer = DrawerNavigator(
         FanMap: { screen: FanMap },
         Profile: { screen: Profile },
         OpenChannel: { screen: OpenChannel },
-        Menu: { screen: Menu },
+        Menu: { screen: Menu }
     },
     {
         initialRouteName: "FanMap",
         contentOptions: {
-        activeTintColor: "#e91e63"
-      },
-      contentComponent: props => <SideBar {...props} />
+            activeTintColor: "#e91e63"
+        },
+        contentComponent: props => <SideBar {...props} />
     }
 );
 
-const MainNavigator = StackNavigator({
+const MainNavigator = StackNavigator(
+    {
         Drawer: { screen: Drawer },
+        OpenChannel: { screen: OpenChannel }
     },
     {
         initialRouteName: "Drawer",
@@ -42,13 +43,13 @@ const MainNavigator = StackNavigator({
 
 class App extends Component {
     state = {
-        fontLoaded: false,
+        fontLoaded: false
     };
 
     async componentWillMount() {
         await Expo.Font.loadAsync({
-          'Roboto': require('native-base/Fonts/Roboto.ttf'),
-          'Roboto_medium': require('native-base/Fonts/Roboto_medium.ttf'),
+            Roboto: require("native-base/Fonts/Roboto.ttf"),
+            Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf")
         });
         this.setState({ fontLoaded: true });
     }
@@ -61,8 +62,8 @@ class App extends Component {
             <Provider store={store}>
                 <MainNavigator />
             </Provider>
-        )
+        );
     }
 }
 
-export default App; 
+export default App;
