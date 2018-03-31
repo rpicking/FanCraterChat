@@ -32,8 +32,6 @@ export const launchLogin = async () => {
         .catch(error => console.log(error));
 };
 
-// get new access token
-
 // get id of current user based on accessToken
 export const getUserId = async () => {
     const accessToken = await AsyncStorage.getItem("accessToken");
@@ -52,9 +50,10 @@ export const getUserId = async () => {
 export const getMetadata = async user_id => {
     const accessToken = await AsyncStorage.getItem("accessToken");
 
-    const user_id = user_id || (await AsyncStorage.getItem("user_id"));
+    user_id = user_id || (await AsyncStorage.getItem("user_id"));
 
     const user_info = await auth0.users(accessToken).getUser({ id: user_id });
+    console.log(userInfo);
     return user_info;
 };
 
@@ -68,4 +67,19 @@ export const setMetadata = async metadata => {
         .patchUser({ id: user_id, metadata: metadata })
         .then(console.log)
         .catch(console.error);
+};
+
+// get new access token
+export const getNewAccessToken = async () => {
+    const refreshToken = await AsyncStorage.getItem("refreshToken");
+
+    const accessToken = await auth0.auth.refreshToken({
+        refreshToken: refreshToken
+    });
+
+    try {
+        await AsyncStorage.setItem("accessToken", accessToken);
+    } catch (error) {
+        console.log(error);
+    }
 };
