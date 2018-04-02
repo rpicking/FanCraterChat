@@ -38,27 +38,9 @@ export default class FanMap extends Component {
             })
             .done();
 
-        /*
-        Permissions.check("location").then(status => {
-            if (status !== "authorized") {
-                Permissions.request("location", "always").then(response => {
-                    console.log("Response: " + response);
-                    if (response === "allow") {
-                        console.log("allow");
-                    } else if (response === "denied") {
-                        console.log("denied");
-                    }
-                });
-            }
-        });*/
-    }
-
-    componentWillMount() {
         this.initRequestionLocation();
         this._getLocationAsync();
     }
-
-    componentWillReceiveProps(props) {}
 
     initRequestionLocation = () => {
         Permissions.check("location", "always").then(async res => {

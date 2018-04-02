@@ -42,19 +42,20 @@ export const getUserId = async () => {
 
     const user_id = user_info.sub;
     await AsyncStorage.setItem("user_id", user_id);
-    console.log(user_info);
     return user_id;
 };
 
 // get full info for user_id or current user if empty
+// must do JSON.parse(await AsyncStorage.getItem("user_info")) to retrive json user_info
 export const getMetadata = async user_id => {
     const accessToken = await AsyncStorage.getItem("accessToken");
-
     user_id = user_id || (await AsyncStorage.getItem("user_id"));
 
     const user_info = await auth0.users(accessToken).getUser({ id: user_id });
-    console.log(userInfo);
-    return user_info;
+
+    const user_metadata = user_info.userMetadata;
+    await AsyncStorage.setItem("metadata", JSON.stringify(user_metadata));
+    return user_metadata;
 };
 
 // modify current user metadata
