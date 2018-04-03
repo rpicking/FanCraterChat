@@ -3,7 +3,7 @@ import { Root } from "native-base";
 import { StackNavigator, DrawerNavigator } from "react-navigation";
 
 import SideBar from "./screens/sidebar";
-import Home from "./screens/home";
+import Splash from "./screens/splash";
 import FanMap from "./screens/fanmap";
 
 const Drawer = DrawerNavigator(
@@ -20,8 +20,8 @@ const Drawer = DrawerNavigator(
 );
 const AppNavigator = StackNavigator(
     {
-        Home: {
-            screen: Home,
+        Splash: {
+            screen: Splash,
             navigationOptions: ({ navigation }) => ({
                 drawerLockMode: "locked-closed"
             })
@@ -30,7 +30,7 @@ const AppNavigator = StackNavigator(
         FanMap: { screen: FanMap }
     },
     {
-        initialRouteName: "Home",
+        initialRouteName: "Splash",
         headerMode: "none"
     }
 );
