@@ -15,8 +15,6 @@ import styles from "./styles";
 const launchscreenBg = require("../../../assets/splashscreen.png");
 const launchscreenLogo = require("../../../assets/logo.png");
 
-AsyncStorage.clear();
-
 export default class Home extends Component {
     constructor(props) {
         super(props);
@@ -41,7 +39,7 @@ export default class Home extends Component {
     };
 
     openFanMap = () => {
-        // remove splash screen from history
+        // remove splash screen from history then navigate to first item in drawer (FanMap)
         const resetAction = NavigationActions.reset({
             index: 0,
             actions: [NavigationActions.navigate({ routeName: "Drawer" })]
