@@ -8,7 +8,7 @@ const auth0 = new Auth0({
 
 // launches login redirect, saving accessToken to storage
 export const launchLogin = async () => {
-    auth0.webAuth
+    return await auth0.webAuth
         .authorize({
             scope:
                 "openid offline_access profile read:current_user update:current_user_metadata",
@@ -28,8 +28,12 @@ export const launchLogin = async () => {
 
             await getUserId();
             await getMetadata();
+            return true;
         })
-        .catch(error => console.log(error));
+        .catch(error => {
+            console.log(error);
+            return false;
+        });
 };
 
 // get id of current user based on accessToken

@@ -8,11 +8,10 @@ import FanMap from "./screens/fanmap";
 
 const Drawer = DrawerNavigator(
     {
-        Home: { screen: Home },
         FanMap: { screen: FanMap }
     },
     {
-        initialRouteName: "Home",
+        initialRouteName: "FanMap",
         contentOptions: {
             activeTintColor: "#e91e63"
         },
@@ -21,14 +20,22 @@ const Drawer = DrawerNavigator(
 );
 const AppNavigator = StackNavigator(
     {
-        Drawer: { screen: Drawer }
+        Home: {
+            screen: Home,
+            navigationOptions: ({ navigation }) => ({
+                drawerLockMode: "locked-closed"
+            })
+        },
+        Drawer: { screen: Drawer },
+        FanMap: { screen: FanMap }
     },
     {
-        initialRouteName: "Drawer",
+        initialRouteName: "Home",
         headerMode: "none"
     }
 );
 
+console.disableYellowBox = true;
 export default () => (
     <Root>
         <AppNavigator />

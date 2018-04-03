@@ -21,9 +21,9 @@ export default {
         height: 100,
         resizeMode: "contain"
     },
-    text: {
-        color: "#D8D8D8",
-        bottom: 6,
-        marginTop: 5
+    buttonView: {
+        marginBottom: 80,
+        marginLeft: 20,
+        marginRight: 20
     }
 };

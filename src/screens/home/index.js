@@ -1,7 +1,13 @@
 import React, { Component } from "react";
-import { Image, ImageBackground, View, StatusBar } from "react-native";
-import { Container, Button, H3, Text } from "native-base";
-
+import {
+    Image,
+    ImageBackground,
+    View,
+    StatusBar,
+    AsyncStorage
+} from "react-native";
+import { NavigationActions } from "react-navigation";
+import { Container, Spinner, Button, Text, Content, Toast } from "native-base";
 import { launchLogin, getMetadata } from "../../actions/accountActions";
 
 import styles from "./styles";
@@ -9,11 +15,63 @@ import styles from "./styles";
 const launchscreenBg = require("../../../assets/splashscreen.png");
 const launchscreenLogo = require("../../../assets/logo.png");
 
-launchLogin();
-//getMetadata();
+AsyncStorage.clear();
 
-class Home extends Component {
+export default class Home extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = { loggedIn: true };
+    }
+
+    componentDidMount() {
+        this.init_user();
+    }
+
+    init_user = async () => {
+        const accessToken = await AsyncStorage.getItem("accessToken");
+        if (accessToken) {
+            // TODO: refresh accessToken if necessary
+
+            await getMetadata();
+            setTimeout(this.openFanMap, 2000);
+        } else {
+            this.setState({ loggedIn: false });
+        }
+    };
+
+    openFanMap = () => {
+        // remove splash screen from history
+        const resetAction = NavigationActions.reset({
+            index: 0,
+            actions: [NavigationActions.navigate({ routeName: "Drawer" })]
+        });
+
+        this.props.navigation.dispatch(resetAction);
+    };
+
+    _onLoginPress = async () => {
+        this.setState({ loggedIn: true });
+        const status = await launchLogin();
+        if (status) {
+            this.openFanMap();
+        } else {
+            this.setState({ loggedIn: false });
+            Toast.show({
+                text: "Login cancelled",
+                position: "bottom",
+                buttonText: "Okay"
+            });
+        }
+    };
+
     render() {
+        const loginButton = (
+            <Button block success onPress={this._onLoginPress}>
+                <Text>Log In</Text>
+            </Button>
+        );
+
         return (
             <Container>
                 <StatusBar barStyle="light-content" />
@@ -24,35 +82,11 @@ class Home extends Component {
                     <View style={styles.logoContainer}>
                         <Image source={launchscreenLogo} style={styles.logo} />
                     </View>
-                    <View
-                        style={{
-                            alignItems: "center",
-                            marginBottom: 50,
-                            backgroundColor: "transparent"
-                        }}
-                    >
-                        <H3 style={styles.text}>App to showcase</H3>
-                        <View style={{ marginTop: 8 }} />
-                        <H3 style={styles.text}>NativeBase components</H3>
-                        <View style={{ marginTop: 8 }} />
-                    </View>
-                    <View style={{ marginBottom: 80 }}>
-                        <Button
-                            style={{
-                                backgroundColor: "#6FAF98",
-                                alignSelf: "center"
-                            }}
-                            onPress={() =>
-                                this.props.navigation.navigate("DrawerOpen")
-                            }
-                        >
-                            <Text>Lets Go!</Text>
-                        </Button>
+                    <View style={styles.buttonView}>
+                        {this.state.loggedIn ? <Spinner /> : loginButton}
                     </View>
                 </ImageBackground>
             </Container>
         );
     }
 }
-
-export default Home;

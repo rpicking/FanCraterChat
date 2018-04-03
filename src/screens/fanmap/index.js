@@ -1,6 +1,5 @@
 import React, { Component, Platform } from "react";
 import { Text, View, StyleSheet } from "react-native";
-//import { Constants, Location, Permissions } from "expo";
 import Permissions from "react-native-permissions";
 import MapView from "react-native-maps";
 import { Content, Icon, Button, Container } from "native-base";
@@ -15,6 +14,7 @@ export default class FanMap extends Component {
 
     constructor(props) {
         super(props);
+
         this.state = { isLoading: true };
         this.state = {
             markers: []
