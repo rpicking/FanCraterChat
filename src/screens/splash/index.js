@@ -32,7 +32,7 @@ export default class Home extends Component {
             // TODO: refresh accessToken if necessary
 
             await getMetadata();
-            setTimeout(this.openFanMap, 2000);
+            setTimeout(this.openFanMap, 1500);
         } else {
             this.setState({ loggedIn: false });
         }
