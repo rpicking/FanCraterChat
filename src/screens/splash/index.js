@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { NavigationActions } from "react-navigation";
 import { Container, Spinner, Button, Text, Content, Toast } from "native-base";
-import { launchLogin, getMetadata } from "../../actions/accountActions";
+import { launchLogin, getMetadata } from "../../actions/auth0Actions";
 
 import styles from "./styles";
 
