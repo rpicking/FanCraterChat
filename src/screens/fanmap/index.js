@@ -9,7 +9,9 @@ import styles from "./style";
 export default class FanMap extends Component {
     state = {
         location: null,
-        errorMessage: null
+        errorMessage: null, 
+        longitude: null, 
+        latitude: null
     };
 
     constructor(props) {
@@ -22,7 +24,7 @@ export default class FanMap extends Component {
     }
 
     componentDidMount() {
-        fetch("http://5a5d22fad6221a0012962d50.mockapi.io/test/user/")
+        fetch("https://5a5d22fad6221a0012962d50.mockapi.io/test/user/")
             .then(response => response.json())
             .then(responseJson => {
                 this.setState(
@@ -54,21 +56,81 @@ export default class FanMap extends Component {
         });
     };
 
+    getUpdatedUsers() {
+        fetch("https://5a5d22fad6221a0012962d50.mockapi.io/test/user/")
+            .then(response => response.json())
+            .then(responseJson => {
+                this.setState(
+                    {
+                        isLoading: false,
+                        markers: responseJson
+                    },
+                    function() {}
+                );
+            })
+            .catch(error => {
+                console.error(error);
+            })
+            .done();
+    }
+    
+    updateLocation(newLongitude, newLatitude) {
+        fetch('https://5a5d22fad6221a0012962d50.mockapi.io/test/user/2', {  
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            longitude: newLongitude,
+            latitude: newLatitude, 
+        })
+        })
+    }
+
+    calculateDistance = (lat1, lon1, lat2, lon2) => {
+        if (lat1 == null || lon1 == null)
+            return 0;
+        const toRadians = (angle)=>{
+            return angle * Math.PI / 180;
+        }
+        
+        var R = 6371e3; // metres
+        var phi1 = toRadians(lat1)
+        var phi2 = toRadians(lat2)
+        var deltaPhi = toRadians((lat2-lat1))
+        var deltaLambda = toRadians((lon2-lon1))
+        
+        var a = Math.sin(deltaPhi/2) * Math.sin(deltaPhi/2) +
+                Math.cos(phi1) * Math.cos(phi2) *
+                Math.sin(deltaLambda/2) * Math.sin(deltaLambda/2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        
+        var d = R * c;
+        return d;
+    }
+
     _getLocationAsync() {
-        navigator.geolocation.getCurrentPosition(
+        navigator.geolocation.watchPosition(
             position => {
-                this.setState({
-                    location: {
+                    region = {
                         latitude: position.coords.latitude,
                         longitude: position.coords.longitude,
                         latitudeDelta: 0.00922 * 1.5,
                         longitudeDelta: 0.00421 * 1.5
                     }
-                });
+                
+                    if (this.calculateDistance(this.state.latitude, this.state.longitude, region.latitude, region.longitude) >= 0.003048) {
+                        this.updateLocation(region.longitude, region.latitude);
+                        this.getUpdatedUsers();
+                    } 
+                    
+                    this.setState({location: region, latitude: region.latitude, longitude: region.longitude})
             },
-            error => console.log(error),
-            { timeout: 20000, maximumAge: 1000 }
+            (error) => this.setState({ error: error.message }),
+            { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000, distanceFilter: 10 }
         );
+        
+        
     }
 
     render() {
@@ -89,7 +151,7 @@ export default class FanMap extends Component {
                                     latitude: marker.latitude,
                                     longitude: marker.longitude
                                 }}
-                                title={marker.email}
+                                description={String(marker.latitude)}
                             />
                         ))}
                     </MapView>
