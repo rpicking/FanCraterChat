@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { Component } from "react";
 import { StackNavigator, DrawerNavigator } from "react-navigation";
 
@@ -67,3 +68,13 @@ class App extends Component {
 }
 
 export default App;
+=======
+import React from "react";
+import Setup from "./src/boot/setup";
+
+export default class App extends React.Component {
+    render() {
+        return <Setup />;
+    }
+}
+>>>>>>> Refactoring
