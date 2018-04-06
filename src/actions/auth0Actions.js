@@ -1,5 +1,7 @@
 import { AsyncStorage } from "react-native";
+import { NavigationActions } from "react-navigation";
 import Auth0 from "react-native-auth0";
+import { Toast } from "native-base";
 
 import { createUser } from "./apiActions";
 
@@ -100,6 +102,7 @@ export const setMetadata = async metadata => {
 export const getNewAccessToken = async () => {
     const refreshToken = await AsyncStorage.getItem("refreshToken");
     let accessToken = "";
+
     try {
         const response = await auth0.auth.refreshToken({
             refreshToken: refreshToken
@@ -110,4 +113,24 @@ export const getNewAccessToken = async () => {
     }
 
     await AsyncStorage.setItem("accessToken", accessToken);
+};
+
+// logout user pass in this.props.navigation
+export const logout = async navigation => {
+    await AsyncStorage.removeItem("accessToken");
+    await AsyncStorage.removeItem("refreshToken");
+    await AsyncStorage.removeItem("api_id");
+    await AsyncStorage.removeItem("user_id");
+
+    const resetAction = NavigationActions.reset({
+        index: 0,
+        actions: [NavigationActions.navigate({ routeName: "Splash" })]
+    });
+
+    navigation.dispatch(resetAction);
+    Toast.show({
+        text: "User Logged Out Successfully",
+        position: "bottom",
+        duration: 3000
+    });
 };

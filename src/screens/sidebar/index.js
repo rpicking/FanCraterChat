@@ -13,6 +13,8 @@ import {
 } from "native-base";
 import styles from "./style";
 
+import { logout } from "../../actions/auth0Actions";
+
 const drawerCover = require("../../../assets/drawer-cover.png");
 const drawerImage = require("../../../assets/logo.png");
 const datas = [
@@ -90,6 +92,25 @@ export default class SideBar extends Component {
                             </ListItem>
                         )}
                     />
+                    <ListItem
+                        button
+                        noBorder
+                        onPress={() => logout(this.props.navigation)}
+                    >
+                        <Left>
+                            <Icon
+                                active
+                                name="logout"
+                                type="MaterialCommunityIcons"
+                                style={{
+                                    color: "#777",
+                                    fontSize: 26,
+                                    width: 30
+                                }}
+                            />
+                            <Text style={styles.text}>Logout</Text>
+                        </Left>
+                    </ListItem>
                 </Content>
             </Container>
         );

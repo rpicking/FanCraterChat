@@ -1,11 +1,5 @@
 import React, { Component } from "react";
-import {
-    Image,
-    ImageBackground,
-    View,
-    StatusBar,
-    AsyncStorage
-} from "react-native";
+import { Image, ImageBackground, View, StatusBar, AsyncStorage } from "react-native";
 import { NavigationActions } from "react-navigation";
 import { Container, Spinner, Button, Text, Content, Toast } from "native-base";
 import { launchLogin, getMetadata } from "../../actions/auth0Actions";
@@ -30,7 +24,7 @@ export default class Home extends Component {
         const accessToken = await AsyncStorage.getItem("accessToken");
         if (accessToken) {
             await getMetadata();
-            setTimeout(this.openFanMap, 1500);
+            setTimeout(this.openFanMap, 1200);
         } else {
             this.setState({ loggedIn: false });
         }
@@ -71,10 +65,7 @@ export default class Home extends Component {
         return (
             <Container>
                 <StatusBar barStyle="light-content" />
-                <ImageBackground
-                    source={launchscreenBg}
-                    style={styles.imageContainer}
-                >
+                <ImageBackground source={launchscreenBg} style={styles.imageContainer}>
                     <View style={styles.logoContainer}>
                         <Image source={launchscreenLogo} style={styles.logo} />
                     </View>
