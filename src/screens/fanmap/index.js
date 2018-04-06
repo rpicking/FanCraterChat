@@ -1,5 +1,5 @@
 import React, { Component, Platform } from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, Image } from "react-native";
 import Permissions from "react-native-permissions";
 import MapView from "react-native-maps";
 import { Content, Icon, Button, Container } from "native-base";
@@ -109,6 +109,13 @@ export default class FanMap extends Component {
         return d;
     }
 
+    onMarkerPress = (fname, image) => {
+        
+            return (
+                    <Text>Dialog box</Text>
+            );
+    }
+
     _getLocationAsync() {
         navigator.geolocation.watchPosition(
             position => {
@@ -123,7 +130,7 @@ export default class FanMap extends Component {
                         this.updateLocation(region.longitude, region.latitude);
                         this.getUpdatedUsers();
                     } 
-                    
+
                     this.setState({location: region, latitude: region.latitude, longitude: region.longitude})
             },
             (error) => this.setState({ error: error.message }),
@@ -151,8 +158,38 @@ export default class FanMap extends Component {
                                     latitude: marker.latitude,
                                     longitude: marker.longitude
                                 }}
-                                description={String(marker.latitude)}
-                            />
+                                
+                                
+                                //image={marker.image}
+                                //onPress={() => { this.onMarkerPress(marker.nickname, marker.image) }}
+                            >
+                            <MapView.Callout style={{padding: 5, height: 200, width: 200, overflow: "visible"}}>
+                                <View style={{flex: 1, flexDirection: "row", alignContent: "flex-start"}}>
+                                <View style={{paddingRight: 5}}>
+                                <Button onPress={ () =>this.props.navigation.navigate("DrawerOpen")}>
+                                <Image style={{width: 50, height: 50}} source={{uri: marker.image}}/>
+                                </Button>
+                                </View>
+                                </View>
+                                <View style={{flex: 1, flexDirection: "row", alignContent: "flex-start"}}>
+                                <View style={{}}>
+                                    <Text style={{color: "#1f56af", fontSize: 40}}>{marker.nickname}</Text>
+                                </View>
+                                </View>
+                                <View style={{flex: 1, flexDirection: "row", alignContent: "flex-start"}}>
+                                <View style={{}}>
+                                    <Text>Notable: <Text style={{color: "#fa0058"}}>{marker.notable}</Text></Text>
+                                </View>
+                                </View>
+                                <View style={{flex: 1, flexDirection: "column", alignItems: "center"}}>
+                                <View style={{alignItems: "center"}}>
+                                <Button onPress={ () =>this.props.navigation.navigate("DrawerOpen")}>
+                                    <Text style={{marginLeft: 50, marginRight: 50 }}>Chat</Text>
+                                </Button>
+                                </View>
+                                </View>
+                            </MapView.Callout>
+                            </MapView.Marker>
                         ))}
                     </MapView>
                     <Button
