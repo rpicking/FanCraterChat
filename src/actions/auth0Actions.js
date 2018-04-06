@@ -7,7 +7,6 @@ const auth0 = new Auth0({
     domain: "rpickingemu.auth0.com",
     clientId: "***REMOVED***"
 });
-AsyncStorage.clear();
 
 // launches login redirect, saving accessToken to storage
 export const launchLogin = async () => {
@@ -88,9 +87,7 @@ export const setMetadata = async metadata => {
 
     console.log(metadata);
     try {
-        await auth0
-            .users(accessToken)
-            .patchUser({ id: user_id, metadata: metadata });
+        await auth0.users(accessToken).patchUser({ id: user_id, metadata: metadata });
     } catch (e) {
         console.log(e);
         await getNewAccessToken();
