@@ -116,9 +116,5 @@ Pods/
 
 # Carthage
 Carthage/Checkouts
-<<<<<<< HEAD
-Carthage/Build
-=======
 Carthage/Build
 android/.idea/
->>>>>>> Refactoring
