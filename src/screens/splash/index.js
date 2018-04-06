@@ -29,8 +29,6 @@ export default class Home extends Component {
     init_user = async () => {
         const accessToken = await AsyncStorage.getItem("accessToken");
         if (accessToken) {
-            // TODO: refresh accessToken if necessary
-
             await getMetadata();
             setTimeout(this.openFanMap, 1500);
         } else {

@@ -1,7 +1,7 @@
+const api = "***REMOVED***";
+
 // must be called with await getPlace(lat, long); in async function
 export const getPlace = (lat, long) => {
-    const api = "***REMOVED***";
-
     return fetch(
         "https://maps.googleapis.com/maps/api/geocode/json?address=" +
             lat +

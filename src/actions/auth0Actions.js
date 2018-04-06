@@ -1,17 +1,20 @@
 import { AsyncStorage } from "react-native";
 import Auth0 from "react-native-auth0";
 
+import { createUser } from "./apiActions";
+
 const auth0 = new Auth0({
     domain: "rpickingemu.auth0.com",
     clientId: "***REMOVED***"
 });
+AsyncStorage.clear();
 
 // launches login redirect, saving accessToken to storage
 export const launchLogin = async () => {
     return await auth0.webAuth
         .authorize({
             scope:
-                "openid offline_access profile read:current_user update:current_user_metadata",
+                "openid offline_access profile email nickname read:current_user update:current_user_metadata",
             audience: "https://rpickingemu.auth0.com/api/v2/"
         })
         .then(async function(credentials) {
@@ -26,8 +29,17 @@ export const launchLogin = async () => {
                 console.log(error);
             }
 
-            await getUserId();
-            await getMetadata();
+            const user_info = await getUserInfo();
+            console.log(user_info);
+            let metadata = await getMetadata();
+            console.log(metadata);
+
+            if (!metadata) {
+                const id = await createUser(user_info);
+                console.log(id);
+                await AsyncStorage.setItem("api_id", id);
+                await setMetadata({ api_id: id });
+            }
             return true;
         })
         .catch(error => {
@@ -37,7 +49,8 @@ export const launchLogin = async () => {
 };
 
 // get id of current user based on accessToken
-export const getUserId = async () => {
+// returns user_info id = user_info.sub
+export const getUserInfo = async () => {
     const accessToken = await AsyncStorage.getItem("accessToken");
 
     const user_info = await auth0.auth.userInfo({
@@ -46,11 +59,9 @@ export const getUserId = async () => {
 
     const user_id = user_info.sub;
     await AsyncStorage.setItem("user_id", user_id);
-    return user_id;
+    return user_info;
 };
 
-// get full info for user_id or current user if empty
-// must do JSON.parse(await AsyncStorage.getItem("user_info")) to retrive json user_info
 export const getMetadata = async user_id => {
     const accessToken = await AsyncStorage.getItem("accessToken");
     user_id = user_id || (await AsyncStorage.getItem("user_id"));
@@ -63,9 +74,11 @@ export const getMetadata = async user_id => {
         return await getMetadata();
     }
 
-    const user_metadata = user_info.userMetadata;
-    await AsyncStorage.setItem("metadata", JSON.stringify(user_metadata));
-    return user_metadata;
+    let api_id = user_info.userMetadata.api_id;
+    if (!api_id) return "";
+
+    await AsyncStorage.setItem("api_id", api_id);
+    return api_id;
 };
 
 // modify current user metadata
@@ -73,6 +86,7 @@ export const setMetadata = async metadata => {
     const accessToken = await AsyncStorage.getItem("accessToken");
     const user_id = await AsyncStorage.getItem("user_id");
 
+    console.log(metadata);
     try {
         await auth0
             .users(accessToken)
