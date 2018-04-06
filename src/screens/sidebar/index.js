@@ -23,10 +23,10 @@ const datas = [
         bg: "#C5F442"
     },
     {
-        name: "Login",
-        route: "Login",
-        type: "MaterialCommunityIcons",
-        icon: "login",
+        name: "Chat",
+        route: "ChatOverview",
+        type: "Entypo",
+        icon: "chat",
         bg: "#C5F442"
     }
 ];
@@ -48,11 +48,7 @@ export default class SideBar extends Component {
                     style={{ flex: 1, backgroundColor: "#fff", top: -1 }}
                 >
                     <Image source={drawerCover} style={styles.drawerCover} />
-                    <Image
-                        square
-                        style={styles.drawerImage}
-                        source={drawerImage}
-                    />
+                    <Image square style={styles.drawerImage} source={drawerImage} />
 
                     <List
                         dataArray={datas}
@@ -60,9 +56,7 @@ export default class SideBar extends Component {
                             <ListItem
                                 button
                                 noBorder
-                                onPress={() =>
-                                    this.props.navigation.navigate(data.route)
-                                }
+                                onPress={() => this.props.navigation.navigate(data.route)}
                             >
                                 <Left>
                                     <Icon

@@ -5,10 +5,12 @@ import { StackNavigator, DrawerNavigator } from "react-navigation";
 import SideBar from "./screens/sidebar";
 import Splash from "./screens/splash";
 import FanMap from "./screens/fanmap";
+import ChatOverview from "./screens/chatoverview";
 
 const Drawer = DrawerNavigator(
     {
-        FanMap: { screen: FanMap }
+        FanMap: { screen: FanMap },
+        ChatOverview: { screen: ChatOverview }
     },
     {
         initialRouteName: "FanMap",
