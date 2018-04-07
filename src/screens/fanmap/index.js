@@ -5,13 +5,16 @@ import MapView from "react-native-maps";
 import { Content, Icon, Button, Container } from "native-base";
 
 import styles from "./style";
+import { getMetadata } from "../../actions/auth0Actions";
 
 export default class FanMap extends Component {
     state = {
         location: null,
         errorMessage: null, 
         longitude: null, 
-        latitude: null
+        latitude: null, 
+        user_id: null, 
+        notable: null
     };
 
     constructor(props) {
@@ -19,7 +22,8 @@ export default class FanMap extends Component {
 
         this.state = { isLoading: true };
         this.state = {
-            markers: []
+            markers: [], 
+            
         };
     }
 
@@ -40,6 +44,7 @@ export default class FanMap extends Component {
             })
             .done();
 
+        this.init_user();
         this.initRequestionLocation();
         this._getLocationAsync();
     }
@@ -54,6 +59,14 @@ export default class FanMap extends Component {
                 console.log("permission: ", this.locationPermission);
             }
         });
+    };
+
+    init_user = async () => {
+        const id = await getMetadata();
+        this.setState({
+            user_id: id
+        })
+        
     };
 
     getUpdatedUsers() {
@@ -75,7 +88,7 @@ export default class FanMap extends Component {
     }
     
     updateLocation(newLongitude, newLatitude) {
-        fetch('http://5a5d22fad6221a0012962d50.mockapi.io/test/user/2', {  
+        fetch('http://5a5d22fad6221a0012962d50.mockapi.io/test/user/' + this.state.user_id, {  
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
