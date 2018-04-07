@@ -14,6 +14,7 @@ import {
 import styles from "./style";
 
 import { logout } from "../../actions/auth0Actions";
+import { logoutSendBird } from "../../actions/sendbirdActions";
 
 const drawerCover = require("../../../assets/drawer-cover.png");
 const drawerImage = require("../../../assets/logo.png");
@@ -41,6 +42,11 @@ export default class SideBar extends Component {
             shadowRadius: 4
         };
     }
+
+    _logout = async () => {
+        await logout(this.props.navigation);
+        await logoutSendBird();
+    };
 
     render() {
         return (
@@ -92,11 +98,7 @@ export default class SideBar extends Component {
                             </ListItem>
                         )}
                     />
-                    <ListItem
-                        button
-                        noBorder
-                        onPress={() => logout(this.props.navigation)}
-                    >
+                    <ListItem button noBorder onPress={() => this._logout}>
                         <Left>
                             <Icon
                                 active

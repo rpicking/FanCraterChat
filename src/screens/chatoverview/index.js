@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { NavigationActions } from "react-navigation";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, AsyncStorage } from "react-native";
 import {
     Container,
     Header,
@@ -17,9 +17,45 @@ import {
     Title
 } from "native-base";
 
+import {
+    getChannelList,
+    getChannelByID,
+    sendMessage,
+    isCurrentUser
+} from "../../actions/sendbirdActions";
+
 import styles from "./styles";
 
 export default class ChatOverview extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { channels: [] };
+    }
+
+    loadChannels = async () => {
+        let list = await getChannelList();
+
+        list.forEach(function(channel) {
+            for (let i = 0; i < channel.members.length; ++i) {
+                if (!isCurrentUser(channel.members[i].userId)) {
+                    channel.otherNickname = channel.members[i].nickname;
+                    channel.otherProfilUrl = channel.members[i].profileUrl;
+                    break;
+                }
+            }
+            channel.members.forEach(member => {});
+        });
+        console.log(list);
+        this.setState({ channels: list });
+    };
+
+    componentDidMount = async () => {
+        let channel = await getChannelByID("auth0|5abdad7f3d8f01209c971091");
+        //await sendMessage("hi there first msg");
+
+        await this.loadChannels();
+    };
+
     goBack = () => {
         this.props.navigation.dispatch(NavigationActions.back());
     };
@@ -32,79 +68,33 @@ export default class ChatOverview extends Component {
         console.log(api_id);
     };
 
+    _convertTime = timestamp => {
+        const time = new Date(timestamp);
+
+        const today = new Date();
+        var lastWeek = Date.parse(
+            new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7)
+        );
+        // will display time as date ie 3/11
+
+        // will display time as day of week
+
+        // Will display time in 10:30 PM format
+        return time.toLocaleString("en-US", {
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true
+        });
+    };
+
+    _convertMessage = lastMessage => {
+        if (isCurrentUser(lastMessage.sender.userId)) {
+            return "You: " + lastMessage.message;
+        }
+        return lastMessage.message;
+    };
+
     render() {
-        var datas = [
-            {
-                name: "Kumar Pratik",
-                lastMsg:
-                    "Doing what you like will always keep you happy Doing what you like will",
-                lastTime: "3:43 pm",
-                image:
-                    "https://lh3.googleusercontent.com/VT-PqxMMsA2wPy7kzmuKGDIzaA3AGuXKExqnfOfwTEy5AvLIMTranbfNGheRr457RD4=w300",
-                sendbird_id: "sendbird here1",
-                api_id: "api id 1"
-            },
-            {
-                name: "Kumar Pratik",
-                lastMsg:
-                    "Doing what you like will always keep you happy Doing what you like will",
-                lastTime: "3:43 pm",
-                image:
-                    "https://raw.githubusercontent.com/github/explore/6c6508f34230f0ac0d49e847a326429eefbfc030/topics/react-native/react-native.png",
-                sendbird_id: "sendbird here1",
-                api_id: "api id 1"
-            },
-            {
-                name: "Kumar Pratik",
-                lastMsg:
-                    "Doing what you like will always keep you happy Doing what you like will",
-                lastTime: "3:43 pm",
-                image:
-                    "https://raw.githubusercontent.com/github/explore/6c6508f34230f0ac0d49e847a326429eefbfc030/topics/react-native/react-native.png",
-                sendbird_id: "sendbird here1",
-                api_id: "api id 1"
-            },
-            {
-                name: "Kumar Pratik",
-                lastMsg:
-                    "Doing what you like will always keep you happy Doing what you like will",
-                lastTime: "3:43 pm",
-                image:
-                    "https://raw.githubusercontent.com/github/explore/6c6508f34230f0ac0d49e847a326429eefbfc030/topics/react-native/react-native.png",
-                sendbird_id: "sendbird here1",
-                api_id: "api id 1"
-            },
-            {
-                name: "Kumar Pratik",
-                lastMsg:
-                    "Doing what you like will always keep you happy Doing what you like will",
-                lastTime: "3:43 pm",
-                image:
-                    "https://raw.githubusercontent.com/github/explore/6c6508f34230f0ac0d49e847a326429eefbfc030/topics/react-native/react-native.png",
-                sendbird_id: "sendbird here1",
-                api_id: "api id 1"
-            },
-            {
-                name: "Kumar Pratik",
-                lastMsg:
-                    "Doing what you like will always keep you happy Doing what you like will",
-                lastTime: "3:43 pm",
-                image:
-                    "https://raw.githubusercontent.com/github/explore/6c6508f34230f0ac0d49e847a326429eefbfc030/topics/react-native/react-native.png",
-                sendbird_id: "sendbird here1",
-                api_id: "api id 1"
-            },
-            {
-                name: "Kumar Pratik",
-                lastMsg:
-                    "Doing what you like will always keep you happy Doing what you like will",
-                lastTime: "3:43 pm",
-                image:
-                    "https://raw.githubusercontent.com/github/explore/6c6508f34230f0ac0d49e847a326429eefbfc030/topics/react-native/react-native.png",
-                sendbird_id: "sendbird here1",
-                api_id: "api id 1"
-            }
-        ];
         return (
             <Container>
                 <Header>
@@ -124,37 +114,39 @@ export default class ChatOverview extends Component {
                 </Header>
                 <Content>
                     <List
-                        dataArray={datas}
+                        dataArray={this.state.channels}
                         renderRow={data => (
                             <ListItem
                                 avatar
                                 button
-                                onPress={() => this.goToMessage(data.sendbird_id)}
+                                onPress={() => this.goToMessage(data.url)}
                                 style={{ height: 75 }}
                             >
                                 <Left>
                                     <TouchableOpacity
-                                        onPress={() => this.goToProfile(data.api_id)}
+                                        onPress={() => this.goToProfile("FILL ME IN")}
                                     >
                                         <Thumbnail
-                                            style={{ height: 50 }}
+                                            style={{ height: 50, width: 50 }}
                                             source={{
-                                                uri: data.image
+                                                uri: data.otherProfilUrl
                                             }}
                                         />
                                     </TouchableOpacity>
                                 </Left>
                                 <Body style={{ marginRight: 10 }}>
-                                    <Text style={{ color: "#212121", fontSize: 15 }}>
-                                        {data.name}
+                                    <Text style={{ color: "#212121", fontSize: 16 }}>
+                                        {data.otherNickname}
                                     </Text>
                                     <Text
                                         style={{ color: "#424242", fontSize: 14 }}
                                         numberOfLines={1}
                                     >
-                                        {data.lastMsg}
+                                        {this._convertMessage(data.lastMessage)}
                                     </Text>
-                                    <Text note>{data.lastTime}</Text>
+                                    <Text note>
+                                        {this._convertTime(data.lastMessage.createdAt)}
+                                    </Text>
                                 </Body>
                             </ListItem>
                         )}

@@ -2,7 +2,9 @@ import React, { Component } from "react";
 import { Image, ImageBackground, View, StatusBar, AsyncStorage } from "react-native";
 import { NavigationActions } from "react-navigation";
 import { Container, Spinner, Button, Text, Content, Toast } from "native-base";
-import { launchLogin, getMetadata } from "../../actions/auth0Actions";
+
+import { launchLogin, getMetadata, getUserInfo } from "../../actions/auth0Actions";
+import { loginSendBird, updateUser, createUser } from "../../actions/sendbirdActions";
 
 import styles from "./styles";
 
@@ -23,7 +25,13 @@ export default class Home extends Component {
     init_user = async () => {
         const accessToken = await AsyncStorage.getItem("accessToken");
         if (accessToken) {
+            const user_info = await getUserInfo();
             await getMetadata();
+
+            // login sendbird user known
+            await loginSendBird(user_info.sub);
+            await updateUser(user_info.nickname, user_info.picture);
+
             setTimeout(this.openFanMap, 1200);
         } else {
             this.setState({ loggedIn: false });
@@ -42,8 +50,11 @@ export default class Home extends Component {
 
     _onLoginPress = async () => {
         this.setState({ loggedIn: true });
-        const status = await launchLogin();
-        if (status) {
+        const user_info = await launchLogin();
+        if (user_info) {
+            // login sendbird if user not already known
+            await createUser(user_info.sub, user_info.nickname, user_info.picture);
+
             this.openFanMap();
         } else {
             this.setState({ loggedIn: false });
