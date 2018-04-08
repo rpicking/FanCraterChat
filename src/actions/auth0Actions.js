@@ -127,6 +127,7 @@ export const logout = async navigation => {
 
     const resetAction = NavigationActions.reset({
         index: 0,
+        key: null,
         actions: [NavigationActions.navigate({ routeName: "Splash" })]
     });
 

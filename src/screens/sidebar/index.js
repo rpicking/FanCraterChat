@@ -44,8 +44,8 @@ export default class SideBar extends Component {
     }
 
     _logout = async () => {
-        await logout(this.props.navigation);
         await logoutSendBird();
+        await logout(this.props.navigation);
     };
 
     render() {
@@ -98,7 +98,7 @@ export default class SideBar extends Component {
                             </ListItem>
                         )}
                     />
-                    <ListItem button noBorder onPress={() => this._logout}>
+                    <ListItem button noBorder onPress={() => this._logout()}>
                         <Left>
                             <Icon
                                 active
