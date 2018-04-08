@@ -5,7 +5,6 @@ import MapView from "react-native-maps";
 import { Content, Icon, Button, Container } from "native-base";
 
 import styles from "./style";
-import { getMetadata } from "../../actions/auth0Actions";
 
 export default class FanMap extends Component {
     state = {
