@@ -13,7 +13,7 @@ import {
 } from "native-base";
 import styles from "./style";
 
-import { logout } from "../../actions/auth0Actions";
+import { logout, setMetadata } from "../../actions/auth0Actions";
 import { logoutSendBird } from "../../actions/sendbirdActions";
 
 const drawerCover = require("../../../assets/drawer-cover.png");
@@ -30,6 +30,20 @@ const datas = [
         route: "ChatNavigator",
         type: "Entypo",
         icon: "chat",
+        bg: "#C5F442"
+    },
+    {
+        name: "User Profile",
+        route: "UserProfile",
+        params: {
+            profileUrl:
+                "https://i.pinimg.com/originals/be/dc/bf/bedcbfe81a37428c0ce5532ec1dc1f10.jpg",
+            userID: "name",
+            location: "Michigan",
+            notables: "Bill and Ted"
+        },
+        type: "FontAwesome",
+        icon: "user",
         bg: "#C5F442"
     }
 ];
@@ -64,7 +78,12 @@ export default class SideBar extends Component {
                             <ListItem
                                 button
                                 noBorder
-                                onPress={() => this.props.navigation.navigate(data.route)}
+                                onPress={() =>
+                                    this.props.navigation.navigate(
+                                        data.route,
+                                        data.params
+                                    )
+                                }
                             >
                                 <Left>
                                     <Icon
@@ -111,6 +130,29 @@ export default class SideBar extends Component {
                                 }}
                             />
                             <Text style={styles.text}>Logout</Text>
+                        </Left>
+                    </ListItem>
+                    <ListItem
+                        button
+                        noBorder
+                        onPress={() => {
+                            const pic =
+                                "https://i.pinimg.com/originals/be/dc/bf/bedcbfe81a37428c0ce5532ec1dc1f10.jpg";
+                            setMetadata({ picture: pic });
+                        }}
+                    >
+                        <Left>
+                            <Icon
+                                active
+                                name="logout"
+                                type="MaterialCommunityIcons"
+                                style={{
+                                    color: "#777",
+                                    fontSize: 26,
+                                    width: 30
+                                }}
+                            />
+                            <Text style={styles.text}>Update</Text>
                         </Left>
                     </ListItem>
                 </Content>

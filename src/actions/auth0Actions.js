@@ -3,12 +3,15 @@ import { NavigationActions } from "react-navigation";
 import Auth0 from "react-native-auth0";
 import { Toast } from "native-base";
 
-import { createUser } from "./apiActions";
+import { createApiUser, updateApiUser } from "./apiActions";
+import { createUser, updateUser, loginSendBird } from "./sendbirdActions";
 
 const auth0 = new Auth0({
     domain: "rpickingemu.auth0.com",
     clientId: "***REMOVED***"
 });
+
+let current_user_info = {};
 
 // launches login redirect, saving accessToken to storage
 export const launchLogin = async () => {
@@ -34,11 +37,15 @@ export const launchLogin = async () => {
             let metadata = await getMetadata();
 
             if (!metadata) {
-                const api_id = await createUser(user_info);
+                metadata = {};
+                const api_id = await createApiUser(user_info);
                 console.log("api_id: " + api_id);
                 await AsyncStorage.setItem("api_id", api_id);
                 await setMetadata({ api_id: api_id });
             }
+
+            // login sendbird
+            await createUser(user_info.sub, user_info.nickname, metadata.picture);
             return user_info;
         })
         .catch(error => {
@@ -56,9 +63,26 @@ export const getUserInfo = async () => {
         token: accessToken
     });
 
+    current_user_info = user_info;
     const user_id = user_info.sub;
+    console.log(user_info);
     await AsyncStorage.setItem("user_id", user_id);
     return user_info;
+};
+
+export const loginSavedUser = async () => {
+    let cur_metadata = await getMetadata(current_user_info.sub);
+    await loginSendBird(current_user_info.sub);
+
+    const nickname = current_user_info.nickname;
+    let picture = current_user_info.picture;
+    if (cur_metadata.hasOwnProperty("picture")) {
+        console.log("picture");
+        picture = cur_metadata.picture;
+    }
+    console.log(nickname);
+    console.log(picture);
+    await updateUser(nickname, picture);
 };
 
 export const getMetadata = async user_id => {
@@ -77,10 +101,13 @@ export const getMetadata = async user_id => {
         user_info.hasOwnProperty("userMetadata") &&
         user_info.userMetadata.hasOwnProperty("api_id")
     ) {
+        if (user_info.userMetadata.hasOwnProperty("picture")) {
+        }
+
         let api_id = user_info.userMetadata.api_id;
         console.log("api_id: " + api_id);
         await AsyncStorage.setItem("api_id", api_id);
-        return api_id;
+        return user_info.userMetadata;
     }
     return;
 };
@@ -91,6 +118,12 @@ export const setMetadata = async metadata => {
     const user_id = await AsyncStorage.getItem("user_id");
 
     console.log(metadata);
+    // update picture on api and sendbird
+    if (metadata.hasOwnProperty("picture")) {
+        await updateUser(null, metadata.picture);
+        await updateApiUser({ image: metadata.picture });
+    }
+
     try {
         await auth0.users(accessToken).patchUser({ id: user_id, metadata: metadata });
     } catch (e) {
