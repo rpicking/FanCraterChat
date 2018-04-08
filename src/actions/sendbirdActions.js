@@ -41,6 +41,27 @@ export const isCurrentUser = id => {
     return user_id === id;
 };
 
+export const getCurrentUser = () => {
+    return user_id;
+};
+
+export const getOtherUserNickname = () => {
+    for (let i = 0; i < currentChannel.members.length; ++i) {
+        if (!isCurrentUser(currentChannel.members[i].userId)) {
+            return currentChannel.members[i].nickname;
+        }
+    }
+    currentChannel.members.forEach(member => {
+        if (!isCurrentUser(member.userId)) {
+            return member.nickname;
+        }
+    });
+};
+
+export const getchannelHandler = () => {
+    return channelHandler;
+};
+
 // returns private channel instance with current user and otherUser
 export const getChannelByID = otherUser => {
     return new Promise(function(resolve, reject) {
@@ -79,6 +100,10 @@ export const getChannelByURL = channelUrl => {
             resolve(channel);
         });
     });
+};
+
+export const isCurrentChannel = channel => {
+    return currentChannel.url === channel.url;
 };
 
 setMessageListQuery = () => {

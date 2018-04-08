@@ -27,7 +27,7 @@ const datas = [
     },
     {
         name: "Chat",
-        route: "ChatOverview",
+        route: "ChatNavigator",
         type: "Entypo",
         icon: "chat",
         bg: "#C5F442"

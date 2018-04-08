@@ -1,6 +1,6 @@
 import React, { Component } from "react";
+import { TouchableOpacity, AsyncStorage, DeviceEventEmitter } from "react-native";
 import { NavigationActions } from "react-navigation";
-import { TouchableOpacity, AsyncStorage } from "react-native";
 import {
     Container,
     Header,
@@ -30,9 +30,18 @@ export default class ChatOverview extends Component {
     constructor(props) {
         super(props);
         this.state = { channels: [] };
+
+        DeviceEventEmitter.addListener("refreshChannels", async e => {
+            await this.loadChannels();
+        });
+    }
+
+    async componentDidMount() {
+        await this.loadChannels();
     }
 
     loadChannels = async () => {
+        this.setState({ channels: [] });
         let list = await getChannelList();
 
         list.forEach(function(channel) {
@@ -46,24 +55,13 @@ export default class ChatOverview extends Component {
             }
             channel.members.forEach(member => {});
         });
-        console.log(list);
         this.setState({ channels: list });
     };
 
-    componentDidMount = async () => {
-        let channel = await getChannelByID("auth0|5abdad7f3d8f01209c971091");
-        //await sendMessage("hi there first msg");
-
-        await this.loadChannels();
-    };
-
-    goBack = () => {
-        this.props.navigation.dispatch(NavigationActions.back());
-    };
-
-    goToMessage = sendbird_id => {
-        console.log(sendbird_id);
-        this.props.navigation.navigate("ChatIndiv", { test: "success" });
+    goToMessage = channel_id => {
+        this.props.navigation.navigate("ChatIndiv", {
+            channelId: channel_id
+        });
     };
 
     goToProfile = api_id => {
@@ -74,7 +72,6 @@ export default class ChatOverview extends Component {
         if (!lastMessage) return "";
 
         let timestamp = lastMessage.createdAt;
-        timestamp = 1523148180000;
         const time = new Date(timestamp);
 
         const today = new Date();
@@ -83,6 +80,7 @@ export default class ChatOverview extends Component {
             today.getMonth(),
             today.getDate() - 7
         ).getTime();
+
         // older than 1 week
         if (lastWeek > timestamp) {
             return time.getMonth() + 1 + "/" + time.getDate();
@@ -121,7 +119,9 @@ export default class ChatOverview extends Component {
                         <Button
                             transparent
                             onPress={() => {
-                                this.goBack();
+                                this.props.navigation.pop();
+
+                                this.props.navigation.goBack(null);
                             }}
                         >
                             <Icon name="arrow-back" />

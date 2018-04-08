@@ -1,5 +1,5 @@
 import React, { Component, Platform } from "react";
-import { Text, View, StyleSheet, Image } from "react-native";
+import { Text, View, StyleSheet, Image, AsyncStorage } from "react-native";
 import Permissions from "react-native-permissions";
 import MapView from "react-native-maps";
 import { Content, Icon, Button, Container } from "native-base";
@@ -10,10 +10,10 @@ import { getMetadata } from "../../actions/auth0Actions";
 export default class FanMap extends Component {
     state = {
         location: null,
-        errorMessage: null, 
-        longitude: null, 
-        latitude: null, 
-        user_id: null, 
+        errorMessage: null,
+        longitude: null,
+        latitude: null,
+        user_id: null,
         notable: null
     };
 
@@ -22,8 +22,7 @@ export default class FanMap extends Component {
 
         this.state = { isLoading: true };
         this.state = {
-            markers: [], 
-            
+            markers: []
         };
     }
 
@@ -52,21 +51,17 @@ export default class FanMap extends Component {
     initRequestionLocation = () => {
         Permissions.check("location", "always").then(async res => {
             if (!res === "authorized") {
-                this.locationPermission = await Permissions.request(
-                    "location",
-                    "always"
-                );
+                this.locationPermission = await Permissions.request("location", "always");
                 console.log("permission: ", this.locationPermission);
             }
         });
     };
 
     init_user = async () => {
-        const id = await getMetadata();
+        const id = await AsyncStorage.getItem("api_id");
         this.setState({
             user_id: id
-        })
-        
+        });
     };
 
     getUpdatedUsers() {
@@ -86,64 +81,83 @@ export default class FanMap extends Component {
             })
             .done();
     }
-    
+
     updateLocation(newLongitude, newLatitude) {
-        fetch('http://5a5d22fad6221a0012962d50.mockapi.io/test/user/' + this.state.user_id, {  
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            longitude: newLongitude,
-            latitude: newLatitude, 
-        })
-        })
+        fetch(
+            "http://5a5d22fad6221a0012962d50.mockapi.io/test/user/" + this.state.user_id,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    longitude: newLongitude,
+                    latitude: newLatitude
+                })
+            }
+        );
     }
 
     calculateDistance = (lat1, lon1, lat2, lon2) => {
-        if (lat1 == null || lon1 == null)
-            return 0;
-        const toRadians = (angle)=>{
+        if (lat1 == null || lon1 == null) return 0;
+        const toRadians = angle => {
             return angle * Math.PI / 180;
-        }
-        
+        };
+
         var R = 6371e3; // metres
-        var phi1 = toRadians(lat1)
-        var phi2 = toRadians(lat2)
-        var deltaPhi = toRadians((lat2-lat1))
-        var deltaLambda = toRadians((lon2-lon1))
-        
-        var a = Math.sin(deltaPhi/2) * Math.sin(deltaPhi/2) +
-                Math.cos(phi1) * Math.cos(phi2) *
-                Math.sin(deltaLambda/2) * Math.sin(deltaLambda/2);
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        
+        var phi1 = toRadians(lat1);
+        var phi2 = toRadians(lat2);
+        var deltaPhi = toRadians(lat2 - lat1);
+        var deltaLambda = toRadians(lon2 - lon1);
+
+        var a =
+            Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
+            Math.cos(phi1) *
+                Math.cos(phi2) *
+                Math.sin(deltaLambda / 2) *
+                Math.sin(deltaLambda / 2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
         var d = R * c;
         return d;
-    }
+    };
 
     _getLocationAsync() {
         navigator.geolocation.watchPosition(
             position => {
-                    region = {
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude,
-                        latitudeDelta: 0.00922 * 1.5,
-                        longitudeDelta: 0.00421 * 1.5
-                    }
-                
-                    if (this.calculateDistance(this.state.latitude, this.state.longitude, region.latitude, region.longitude) >= 0.003048) {
-                        this.updateLocation(region.longitude, region.latitude);
-                        this.getUpdatedUsers();
-                    } 
+                region = {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
+                    latitudeDelta: 0.00922 * 1.5,
+                    longitudeDelta: 0.00421 * 1.5
+                };
 
-                    this.setState({location: region, latitude: region.latitude, longitude: region.longitude})
+                if (
+                    this.calculateDistance(
+                        this.state.latitude,
+                        this.state.longitude,
+                        region.latitude,
+                        region.longitude
+                    ) >= 0.003048
+                ) {
+                    this.updateLocation(region.longitude, region.latitude);
+                    this.getUpdatedUsers();
+                }
+
+                this.setState({
+                    location: region,
+                    latitude: region.latitude,
+                    longitude: region.longitude
+                });
             },
-            (error) => this.setState({ error: error.message }),
-            { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000, distanceFilter: 10 }
+            error => this.setState({ error: error.message }),
+            {
+                enableHighAccuracy: true,
+                timeout: 20000,
+                maximumAge: 1000,
+                distanceFilter: 10
+            }
         );
-        
-        
     }
 
     render() {
@@ -165,32 +179,91 @@ export default class FanMap extends Component {
                                     longitude: marker.longitude
                                 }}
                             >
-                            <MapView.Callout style={{padding: 5, height: 200, width: 200}}>
-                                <View style={{flex: 1, flexDirection: "row", alignContent: "flex-start"}}>
-                                <View style={{paddingRight: 5}}>
-                                <Button onPress={ () =>this.props.navigation.navigate("DrawerOpen")}>
-                                <Image style={{width: 50, height: 50}} source={{uri: marker.image}}/>
-                                </Button>
-                                </View>
-                                </View>
-                                <View style={{flex: 1, flexDirection: "row", alignContent: "flex-start"}}>
-                                <View style={{}}>
-                                    <Text style={{color: "#00bcd4", fontSize: 40}}>{marker.nickname}</Text>
-                                </View>
-                                </View>
-                                <View style={{flex: 1, flexDirection: "row", alignContent: "flex-start"}}>
-                                <View style={{}}>
-                                    <Text>Notable: <Text style={{color: "#fa0058"}}>{marker.notable}</Text></Text>
-                                </View>
-                                </View>
-                                <View style={{flex: 1, flexDirection: "column", alignItems: "center"}}>
-                                <View style={{alignItems: "center"}}>
-                                <Button style={{backgroundColor: "#000" }}onPress={ () =>this.props.navigation.navigate("DrawerOpen")}>
-                                    <Text style={{marginLeft: 50, marginRight: 50, color: "#ffffff" }}>Chat</Text>
-                                </Button>
-                                </View>
-                                </View>
-                            </MapView.Callout>
+                                <MapView.Callout
+                                    style={{ padding: 5, height: 200, width: 200 }}
+                                >
+                                    <View
+                                        style={{
+                                            flex: 1,
+                                            flexDirection: "row",
+                                            alignContent: "flex-start"
+                                        }}
+                                    >
+                                        <View style={{ paddingRight: 5 }}>
+                                            <Button
+                                                onPress={() =>
+                                                    this.props.navigation.navigate(
+                                                        "DrawerOpen"
+                                                    )
+                                                }
+                                            >
+                                                <Image
+                                                    style={{ width: 50, height: 50 }}
+                                                    source={{ uri: marker.image }}
+                                                />
+                                            </Button>
+                                        </View>
+                                    </View>
+                                    <View
+                                        style={{
+                                            flex: 1,
+                                            flexDirection: "row",
+                                            alignContent: "flex-start"
+                                        }}
+                                    >
+                                        <View style={{}}>
+                                            <Text
+                                                style={{ color: "#00bcd4", fontSize: 40 }}
+                                            >
+                                                {marker.nickname}
+                                            </Text>
+                                        </View>
+                                    </View>
+                                    <View
+                                        style={{
+                                            flex: 1,
+                                            flexDirection: "row",
+                                            alignContent: "flex-start"
+                                        }}
+                                    >
+                                        <View style={{}}>
+                                            <Text>
+                                                Notable:{" "}
+                                                <Text style={{ color: "#fa0058" }}>
+                                                    {marker.notable}
+                                                </Text>
+                                            </Text>
+                                        </View>
+                                    </View>
+                                    <View
+                                        style={{
+                                            flex: 1,
+                                            flexDirection: "column",
+                                            alignItems: "center"
+                                        }}
+                                    >
+                                        <View style={{ alignItems: "center" }}>
+                                            <Button
+                                                style={{ backgroundColor: "#000" }}
+                                                onPress={() =>
+                                                    this.props.navigation.navigate(
+                                                        "DrawerOpen"
+                                                    )
+                                                }
+                                            >
+                                                <Text
+                                                    style={{
+                                                        marginLeft: 50,
+                                                        marginRight: 50,
+                                                        color: "#ffffff"
+                                                    }}
+                                                >
+                                                    Chat
+                                                </Text>
+                                            </Button>
+                                        </View>
+                                    </View>
+                                </MapView.Callout>
                             </MapView.Marker>
                         ))}
                     </MapView>
@@ -198,9 +271,7 @@ export default class FanMap extends Component {
                         transparent
                         large
                         style={styles.button}
-                        onPress={() =>
-                            this.props.navigation.navigate("DrawerOpen")
-                        }
+                        onPress={() => this.props.navigation.navigate("DrawerOpen")}
                     >
                         <Icon
                             name={"menu"}
