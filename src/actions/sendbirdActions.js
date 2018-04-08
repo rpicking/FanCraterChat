@@ -88,6 +88,7 @@ setMessageListQuery = () => {
 // returns array containing group channel objects user is apart of
 export const getChannelList = () => {
     var channelListQuery = sb.GroupChannel.createMyGroupChannelListQuery();
+    channelListQuery.includeEmpty = true;
     channelListQuery.limit = 100; // pagination limit could be set up to 100
 
     if (channelListQuery.hasNext) {

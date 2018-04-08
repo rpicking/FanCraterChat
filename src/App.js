@@ -6,11 +6,13 @@ import SideBar from "./screens/sidebar";
 import Splash from "./screens/splash";
 import FanMap from "./screens/fanmap";
 import ChatOverview from "./screens/chatoverview";
+import ChatIndiv from "./screens/chatindiv";
 
 const Drawer = DrawerNavigator(
     {
         FanMap: { screen: FanMap },
-        ChatOverview: { screen: ChatOverview }
+        ChatOverview: { screen: ChatOverview },
+        ChatIndiv: { screen: ChatIndiv }
     },
     {
         initialRouteName: "FanMap",
@@ -29,7 +31,9 @@ const AppNavigator = StackNavigator(
             })
         },
         Drawer: { screen: Drawer },
-        FanMap: { screen: FanMap }
+        FanMap: { screen: FanMap },
+        ChatOverview: { screen: ChatOverview },
+        ChatIndiv: { screen: ChatIndiv }
     },
     {
         initialRouteName: "Splash",

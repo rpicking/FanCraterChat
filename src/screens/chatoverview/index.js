@@ -38,6 +38,7 @@ export default class ChatOverview extends Component {
         list.forEach(function(channel) {
             for (let i = 0; i < channel.members.length; ++i) {
                 if (!isCurrentUser(channel.members[i].userId)) {
+                    channel.otherUserId = channel.members[i].userId;
                     channel.otherNickname = channel.members[i].nickname;
                     channel.otherProfilUrl = channel.members[i].profileUrl;
                     break;
@@ -62,23 +63,40 @@ export default class ChatOverview extends Component {
 
     goToMessage = sendbird_id => {
         console.log(sendbird_id);
+        this.props.navigation.navigate("ChatIndiv", { test: "success" });
     };
 
     goToProfile = api_id => {
         console.log(api_id);
     };
 
-    _convertTime = timestamp => {
+    _convertTime = lastMessage => {
+        if (!lastMessage) return "";
+
+        let timestamp = lastMessage.createdAt;
+        timestamp = 1523148180000;
         const time = new Date(timestamp);
 
         const today = new Date();
-        var lastWeek = Date.parse(
-            new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7)
-        );
-        // will display time as date ie 3/11
-
-        // will display time as day of week
-
+        var lastWeek = new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate() - 7
+        ).getTime();
+        // older than 1 week
+        if (lastWeek > timestamp) {
+            return time.getMonth() + 1 + "/" + time.getDate();
+        } else if (time.toDateString() !== today.toDateString()) {
+            // younger than a week not today
+            return time.toLocaleString("en-us", { weekday: "short" });
+        }
+        let minutes = today - time;
+        if (minutes < 60 * 60 * 1000) {
+            minutes = Math.floor(minutes / 60 / 1000);
+            if (minutes === 0) return "Now";
+            if (minutes === 1) return minutes + " min";
+            return minutes + " mins";
+        }
         // Will display time in 10:30 PM format
         return time.toLocaleString("en-US", {
             hour: "numeric",
@@ -88,6 +106,7 @@ export default class ChatOverview extends Component {
     };
 
     _convertMessage = lastMessage => {
+        if (!lastMessage) return "";
         if (isCurrentUser(lastMessage.sender.userId)) {
             return "You: " + lastMessage.message;
         }
@@ -111,6 +130,14 @@ export default class ChatOverview extends Component {
                     <Body>
                         <Title>Messages</Title>
                     </Body>
+                    <Right>
+                        <Button
+                            transparent
+                            onPress={() => this.props.navigation.navigate("DrawerOpen")}
+                        >
+                            <Icon name="menu" />
+                        </Button>
+                    </Right>
                 </Header>
                 <Content>
                     <List
@@ -124,7 +151,7 @@ export default class ChatOverview extends Component {
                             >
                                 <Left>
                                     <TouchableOpacity
-                                        onPress={() => this.goToProfile("FILL ME IN")}
+                                        onPress={() => this.goToProfile(data.otherUserId)}
                                     >
                                         <Thumbnail
                                             style={{ height: 50, width: 50 }}
@@ -145,7 +172,7 @@ export default class ChatOverview extends Component {
                                         {this._convertMessage(data.lastMessage)}
                                     </Text>
                                     <Text note>
-                                        {this._convertTime(data.lastMessage.createdAt)}
+                                        {this._convertTime(data.lastMessage)}
                                     </Text>
                                 </Body>
                             </ListItem>
