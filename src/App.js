@@ -6,20 +6,32 @@ import SideBar from "./screens/sidebar";
 import Splash from "./screens/splash";
 import FanMap from "./screens/fanmap";
 import ChatOverview from "./screens/chatoverview";
+import ChatIndiv from "./screens/chatindiv";
+
+export const ChatNavigator = StackNavigator(
+    {
+        ChatOverview: { screen: ChatOverview },
+        ChatIndiv: { screen: ChatIndiv }
+    },
+    {
+        initialRouteName: "ChatOverview",
+        headerMode: "none"
+    }
+);
 
 const Drawer = DrawerNavigator(
     {
         FanMap: { screen: FanMap },
-        ChatOverview: { screen: ChatOverview }
+        ChatNavigator: { screen: ChatNavigator }
     },
     {
-        initialRouteName: "FanMap",
         contentOptions: {
             activeTintColor: "#e91e63"
         },
         contentComponent: props => <SideBar {...props} />
     }
 );
+
 const AppNavigator = StackNavigator(
     {
         Splash: {
@@ -28,8 +40,7 @@ const AppNavigator = StackNavigator(
                 drawerLockMode: "locked-closed"
             })
         },
-        Drawer: { screen: Drawer },
-        FanMap: { screen: FanMap }
+        Drawer: { screen: Drawer }
     },
     {
         initialRouteName: "Splash",

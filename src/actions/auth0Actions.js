@@ -15,7 +15,7 @@ export const launchLogin = async () => {
     return await auth0.webAuth
         .authorize({
             scope:
-                "openid offline_access profile email nickname read:current_user update:current_user_metadata",
+                "openid offline_access profile email nickname user_metadata read:current_user update:current_user_metadata",
             audience: "https://rpickingemu.auth0.com/api/v2/"
         })
         .then(async function(credentials) {
@@ -31,17 +31,15 @@ export const launchLogin = async () => {
             }
 
             const user_info = await getUserInfo();
-            console.log(user_info);
             let metadata = await getMetadata();
-            console.log(metadata);
 
             if (!metadata) {
-                const id = await createUser(user_info);
-                console.log(id);
-                await AsyncStorage.setItem("api_id", id);
-                await setMetadata({ api_id: id });
+                const api_id = await createUser(user_info);
+                console.log("api_id: " + api_id);
+                await AsyncStorage.setItem("api_id", api_id);
+                await setMetadata({ api_id: api_id });
             }
-            return true;
+            return user_info;
         })
         .catch(error => {
             console.log(error);
@@ -75,11 +73,16 @@ export const getMetadata = async user_id => {
         return await getMetadata();
     }
 
-    let api_id = user_info.userMetadata.api_id;
-    if (!api_id) return "";
-
-    await AsyncStorage.setItem("api_id", api_id);
-    return api_id;
+    if (
+        user_info.hasOwnProperty("userMetadata") &&
+        user_info.userMetadata.hasOwnProperty("api_id")
+    ) {
+        let api_id = user_info.userMetadata.api_id;
+        console.log("api_id: " + api_id);
+        await AsyncStorage.setItem("api_id", api_id);
+        return api_id;
+    }
+    return;
 };
 
 // modify current user metadata
@@ -124,6 +127,7 @@ export const logout = async navigation => {
 
     const resetAction = NavigationActions.reset({
         index: 0,
+        key: null,
         actions: [NavigationActions.navigate({ routeName: "Splash" })]
     });
 

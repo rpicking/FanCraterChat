@@ -1,6 +1,6 @@
 import React, { Component } from "react";
+import { TouchableOpacity, AsyncStorage, DeviceEventEmitter } from "react-native";
 import { NavigationActions } from "react-navigation";
-import { TouchableOpacity } from "react-native";
 import {
     Container,
     Header,
@@ -17,94 +17,101 @@ import {
     Title
 } from "native-base";
 
+import {
+    getChannelList,
+    getChannelByID,
+    sendMessage,
+    isCurrentUser
+} from "../../actions/sendbirdActions";
+
 import styles from "./styles";
 
 export default class ChatOverview extends Component {
-    goBack = () => {
-        this.props.navigation.dispatch(NavigationActions.back());
+    constructor(props) {
+        super(props);
+        this.state = { channels: [] };
+
+        DeviceEventEmitter.addListener("refreshChannels", async e => {
+            await this.loadChannels();
+        });
+    }
+
+    async componentDidMount() {
+        await this.loadChannels();
+    }
+
+    loadChannels = async () => {
+        this.setState({ channels: [] });
+        let list = await getChannelList();
+
+        list.forEach(function(channel) {
+            for (let i = 0; i < channel.members.length; ++i) {
+                if (!isCurrentUser(channel.members[i].userId)) {
+                    channel.otherUserId = channel.members[i].userId;
+                    channel.otherNickname = channel.members[i].nickname;
+                    channel.otherProfilUrl = channel.members[i].profileUrl;
+                    break;
+                }
+            }
+            channel.members.forEach(member => {});
+        });
+        this.setState({ channels: list });
     };
 
-    goToMessage = sendbird_id => {
-        console.log(sendbird_id);
+    goToMessage = channel_id => {
+        this.props.navigation.navigate("ChatIndiv", {
+            channelId: channel_id
+        });
     };
 
     goToProfile = api_id => {
         console.log(api_id);
     };
 
+    _convertTime = lastMessage => {
+        if (!lastMessage) return "";
+
+        let timestamp = lastMessage.createdAt;
+        const time = new Date(timestamp);
+
+        const today = new Date();
+        var lastWeek = new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate() - 7
+        ).getTime();
+
+        // older than 1 week
+        if (lastWeek > timestamp) {
+            return time.getMonth() + 1 + "/" + time.getDate();
+        } else if (time.toDateString() !== today.toDateString()) {
+            // younger than a week not today
+            return time.toLocaleString("en-us", { weekday: "short" });
+        }
+        let minutes = today - time;
+        if (minutes < 60 * 60 * 1000) {
+            minutes = Math.floor(minutes / 60 / 1000);
+            if (minutes === 0) return "Now";
+            if (minutes === 1) return minutes + " min";
+            return minutes + " mins";
+        }
+        // Will display time in 10:30 PM format
+        return time.toLocaleString("en-US", {
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true
+        });
+    };
+
+    _convertMessage = lastMessage => {
+        if (!lastMessage) return "";
+        if (isCurrentUser(lastMessage.sender.userId)) {
+            return "You: " + lastMessage.message;
+        }
+        return lastMessage.message;
+    };
+
     render() {
-        var datas = [
-            {
-                name: "Kumar Pratik",
-                lastMsg:
-                    "Doing what you like will always keep you happy Doing what you like will",
-                lastTime: "3:43 pm",
-                image:
-                    "https://lh3.googleusercontent.com/VT-PqxMMsA2wPy7kzmuKGDIzaA3AGuXKExqnfOfwTEy5AvLIMTranbfNGheRr457RD4=w300",
-                sendbird_id: "sendbird here1",
-                api_id: "api id 1"
-            },
-            {
-                name: "Kumar Pratik",
-                lastMsg:
-                    "Doing what you like will always keep you happy Doing what you like will",
-                lastTime: "3:43 pm",
-                image:
-                    "https://raw.githubusercontent.com/github/explore/6c6508f34230f0ac0d49e847a326429eefbfc030/topics/react-native/react-native.png",
-                sendbird_id: "sendbird here1",
-                api_id: "api id 1"
-            },
-            {
-                name: "Kumar Pratik",
-                lastMsg:
-                    "Doing what you like will always keep you happy Doing what you like will",
-                lastTime: "3:43 pm",
-                image:
-                    "https://raw.githubusercontent.com/github/explore/6c6508f34230f0ac0d49e847a326429eefbfc030/topics/react-native/react-native.png",
-                sendbird_id: "sendbird here1",
-                api_id: "api id 1"
-            },
-            {
-                name: "Kumar Pratik",
-                lastMsg:
-                    "Doing what you like will always keep you happy Doing what you like will",
-                lastTime: "3:43 pm",
-                image:
-                    "https://raw.githubusercontent.com/github/explore/6c6508f34230f0ac0d49e847a326429eefbfc030/topics/react-native/react-native.png",
-                sendbird_id: "sendbird here1",
-                api_id: "api id 1"
-            },
-            {
-                name: "Kumar Pratik",
-                lastMsg:
-                    "Doing what you like will always keep you happy Doing what you like will",
-                lastTime: "3:43 pm",
-                image:
-                    "https://raw.githubusercontent.com/github/explore/6c6508f34230f0ac0d49e847a326429eefbfc030/topics/react-native/react-native.png",
-                sendbird_id: "sendbird here1",
-                api_id: "api id 1"
-            },
-            {
-                name: "Kumar Pratik",
-                lastMsg:
-                    "Doing what you like will always keep you happy Doing what you like will",
-                lastTime: "3:43 pm",
-                image:
-                    "https://raw.githubusercontent.com/github/explore/6c6508f34230f0ac0d49e847a326429eefbfc030/topics/react-native/react-native.png",
-                sendbird_id: "sendbird here1",
-                api_id: "api id 1"
-            },
-            {
-                name: "Kumar Pratik",
-                lastMsg:
-                    "Doing what you like will always keep you happy Doing what you like will",
-                lastTime: "3:43 pm",
-                image:
-                    "https://raw.githubusercontent.com/github/explore/6c6508f34230f0ac0d49e847a326429eefbfc030/topics/react-native/react-native.png",
-                sendbird_id: "sendbird here1",
-                api_id: "api id 1"
-            }
-        ];
         return (
             <Container>
                 <Header>
@@ -112,7 +119,9 @@ export default class ChatOverview extends Component {
                         <Button
                             transparent
                             onPress={() => {
-                                this.goBack();
+                                this.props.navigation.pop();
+
+                                this.props.navigation.goBack(null);
                             }}
                         >
                             <Icon name="arrow-back" />
@@ -121,40 +130,50 @@ export default class ChatOverview extends Component {
                     <Body>
                         <Title>Messages</Title>
                     </Body>
+                    <Right>
+                        <Button
+                            transparent
+                            onPress={() => this.props.navigation.navigate("DrawerOpen")}
+                        >
+                            <Icon name="menu" />
+                        </Button>
+                    </Right>
                 </Header>
                 <Content>
                     <List
-                        dataArray={datas}
+                        dataArray={this.state.channels}
                         renderRow={data => (
                             <ListItem
                                 avatar
                                 button
-                                onPress={() => this.goToMessage(data.sendbird_id)}
+                                onPress={() => this.goToMessage(data.url)}
                                 style={{ height: 75 }}
                             >
                                 <Left>
                                     <TouchableOpacity
-                                        onPress={() => this.goToProfile(data.api_id)}
+                                        onPress={() => this.goToProfile(data.otherUserId)}
                                     >
                                         <Thumbnail
-                                            style={{ height: 50 }}
+                                            style={{ height: 50, width: 50 }}
                                             source={{
-                                                uri: data.image
+                                                uri: data.otherProfilUrl
                                             }}
                                         />
                                     </TouchableOpacity>
                                 </Left>
                                 <Body style={{ marginRight: 10 }}>
-                                    <Text style={{ color: "#212121", fontSize: 15 }}>
-                                        {data.name}
+                                    <Text style={{ color: "#212121", fontSize: 16 }}>
+                                        {data.otherNickname}
                                     </Text>
                                     <Text
                                         style={{ color: "#424242", fontSize: 14 }}
                                         numberOfLines={1}
                                     >
-                                        {data.lastMsg}
+                                        {this._convertMessage(data.lastMessage)}
                                     </Text>
-                                    <Text note>{data.lastTime}</Text>
+                                    <Text note>
+                                        {this._convertTime(data.lastMessage)}
+                                    </Text>
                                 </Body>
                             </ListItem>
                         )}
