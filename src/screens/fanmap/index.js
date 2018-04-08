@@ -5,7 +5,6 @@ import MapView from "react-native-maps";
 import { Content, Icon, Button, Container } from "native-base";
 
 import styles from "./style";
-import { getMetadata } from "../../actions/auth0Actions";
 
 export default class FanMap extends Component {
     state = {
@@ -14,7 +13,6 @@ export default class FanMap extends Component {
         longitude: null, 
         latitude: null, 
         user_id: null, 
-        notable: null
     };
 
     constructor(props) {
@@ -22,13 +20,12 @@ export default class FanMap extends Component {
 
         this.state = { isLoading: true };
         this.state = {
-            markers: [], 
-            
+            markers: []
         };
     }
 
     componentDidMount() {
-        fetch("http://5a5d22fad6221a0012962d50.mockapi.io/test/user/")
+        fetch("http://5a5d22fad6221a001296git 2d50.mockapi.io/test/user/")
             .then(response => response.json())
             .then(responseJson => {
                 this.setState(
@@ -67,7 +64,7 @@ export default class FanMap extends Component {
             user_id: id
         })
         
-    };
+    };    
 
     getUpdatedUsers() {
         fetch("http://5a5d22fad6221a0012962d50.mockapi.io/test/user/")
