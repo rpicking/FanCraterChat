@@ -9,18 +9,11 @@ import styles from "./style";
 export default class FanMap extends Component {
     state = {
         location: null,
-<<<<<<< HEAD
-        errorMessage: null, 
-        longitude: null, 
-        latitude: null, 
-        user_id: null, 
-=======
         errorMessage: null,
         longitude: null,
         latitude: null,
         user_id: null,
         notable: null
->>>>>>> 7fca56e6d7e677b7c8b26b07cf0c8f26db16537a
     };
 
     constructor(props) {
@@ -33,7 +26,7 @@ export default class FanMap extends Component {
     }
 
     componentDidMount() {
-        fetch("http://5a5d22fad6221a001296git 2d50.mockapi.io/test/user/")
+        fetch("http://5a5d22fad6221a0012962d50.mockapi.io/test/user/")
             .then(response => response.json())
             .then(responseJson => {
                 this.setState(
@@ -67,14 +60,8 @@ export default class FanMap extends Component {
         const id = await AsyncStorage.getItem("api_id");
         this.setState({
             user_id: id
-<<<<<<< HEAD
-        })
-        
-    };    
-=======
         });
     };
->>>>>>> 7fca56e6d7e677b7c8b26b07cf0c8f26db16537a
 
     getUpdatedUsers() {
         fetch("http://5a5d22fad6221a0012962d50.mockapi.io/test/user/")
