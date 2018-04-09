@@ -7,6 +7,7 @@ import Splash from "./screens/splash";
 import FanMap from "./screens/fanmap";
 import ChatOverview from "./screens/chatoverview";
 import ChatIndiv from "./screens/chatindiv";
+import UserProfile from "./screens/userProfile";
 
 export const ChatNavigator = StackNavigator(
     {
@@ -22,7 +23,8 @@ export const ChatNavigator = StackNavigator(
 const Drawer = DrawerNavigator(
     {
         FanMap: { screen: FanMap },
-        ChatNavigator: { screen: ChatNavigator }
+        ChatNavigator: { screen: ChatNavigator },
+        UserProfile: { screen: UserProfile }
     },
     {
         contentOptions: {

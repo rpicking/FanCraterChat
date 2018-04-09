@@ -3,7 +3,12 @@ import { Image, ImageBackground, View, StatusBar, AsyncStorage } from "react-nat
 import { NavigationActions } from "react-navigation";
 import { Container, Spinner, Button, Text, Content, Toast } from "native-base";
 
-import { launchLogin, getMetadata, getUserInfo } from "../../actions/auth0Actions";
+import {
+    launchLogin,
+    getMetadata,
+    getUserInfo,
+    loginSavedUser
+} from "../../actions/auth0Actions";
 import { loginSendBird, updateUser, createUser } from "../../actions/sendbirdActions";
 
 import styles from "./styles";
@@ -11,7 +16,7 @@ import styles from "./styles";
 const launchscreenBg = require("../../../assets/splashscreen.png");
 const launchscreenLogo = require("../../../assets/logo.png");
 
-export default class Home extends Component {
+export default class Splash extends Component {
     constructor(props) {
         super(props);
 
@@ -26,11 +31,12 @@ export default class Home extends Component {
         const accessToken = await AsyncStorage.getItem("accessToken");
         if (accessToken) {
             const user_info = await getUserInfo();
-            await getMetadata();
+            await loginSavedUser();
+            //await getMetadata();
 
             // login sendbird user known
-            await loginSendBird(user_info.sub);
-            await updateUser(user_info.nickname, user_info.picture);
+            //await loginSendBird(user_info.sub);
+            //await updateUser(user_info.nickname, user_info.picture);
 
             setTimeout(this.openFanMap, 1200);
         } else {
@@ -53,7 +59,7 @@ export default class Home extends Component {
         const user_info = await launchLogin();
         if (user_info) {
             // login sendbird if user not already known
-            await createUser(user_info.sub, user_info.nickname, user_info.picture);
+            //await createUser(user_info.sub, user_info.nickname, user_info.picture);
 
             this.openFanMap();
         } else {

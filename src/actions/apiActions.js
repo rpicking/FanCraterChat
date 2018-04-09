@@ -1,4 +1,6 @@
-export const createUser = user_info => {
+import { AsyncStorage } from "react-native";
+
+export const createApiUser = user_info => {
     return new Promise(function(resolve, reject) {
         let request = new XMLHttpRequest();
         let url = `http://5a5d22fad6221a0012962d50.mockapi.io/test/user/`;
@@ -21,5 +23,26 @@ export const createUser = user_info => {
             nickname: user_info.nickname
         };
         request.send(JSON.stringify(data));
+    });
+};
+
+// updates user with metadata.  If no api_id is specified, updates current user
+export const updateApiUser = (metadata, api_id) => {
+    return new Promise(async function(resolve, reject) {
+        let request = new XMLHttpRequest();
+
+        api_id = api_id || (await AsyncStorage.getItem("api_id"));
+        let url = "http://5a5d22fad6221a0012962d50.mockapi.io/test/user/" + api_id;
+
+        request.onreadystatechange = function() {
+            if (this.readyState === 4 && this.status === 200) {
+                let response = JSON.parse(this.responseText);
+                console.log(response);
+            }
+        };
+
+        request.open("PUT", url, true);
+        request.setRequestHeader("Content-type", "application/json");
+        request.send(JSON.stringify(metadata));
     });
 };
