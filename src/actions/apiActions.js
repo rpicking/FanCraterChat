@@ -46,3 +46,57 @@ export const updateApiUser = (metadata, api_id) => {
         request.send(JSON.stringify(metadata));
     });
 };
+
+export const getRelatedUsers = async (notable) => {
+    return new Promise(async function(resolve, reject) {
+        let request = new XMLHttpRequest();
+        let url = "http://5a5d22fad6221a0012962d50.mockapi.io/test/user/";
+
+        request.onreadystatechange = function() {
+            if (this.readyState === 4 && this.status === 200) {
+                let response = JSON.parse(this.responseText);
+                response = filterUsers(response, notable);
+                return resolve(response);
+            }
+        };
+
+        request.open("GET", url, true);
+        request.setRequestHeader("Content-type", "application/json");
+        request.send();
+    });
+};
+
+
+export const getNotable = async () => {
+    return new Promise(async function(resolve, reject) {
+        let request = new XMLHttpRequest();
+        let api_id = await AsyncStorage.getItem("api_id");
+        let url = "http://5a5d22fad6221a0012962d50.mockapi.io/test/user/" + api_id;
+
+        request.onreadystatechange = function() {
+            if (this.readyState === 4 && this.status === 200) {
+                let response = JSON.parse(this.responseText);
+                return resolve(response.notable);
+            }
+        };
+
+        request.open("GET", url, true);
+        request.setRequestHeader("Content-type", "application/json");
+        request.send();
+    });
+};
+
+function filterUsers(response, notable) {
+    var count = 0;
+    for (var user in response)
+    {
+        if (response[user].notable != notable)
+        {
+            response[user].latitude = "";
+            response[user].longitude = "";
+        }
+        count++;
+    }
+    
+    return response;
+}

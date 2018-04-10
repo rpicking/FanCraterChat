@@ -3,6 +3,8 @@ import { Text, View, StyleSheet, Image, AsyncStorage } from "react-native";
 import Permissions from "react-native-permissions";
 import MapView from "react-native-maps";
 import { Content, Icon, Button, Container } from "native-base";
+import {updateApiUser, getRelatedUsers, getNotable} from "../../actions/apiActions";
+import { calculateDistance } from "../../helpers/helpers";
 
 import styles from "./style";
 
@@ -12,8 +14,6 @@ export default class FanMap extends Component {
         errorMessage: null,
         longitude: null,
         latitude: null,
-        user_id: null,
-        notable: null
     };
 
     constructor(props) {
@@ -26,23 +26,7 @@ export default class FanMap extends Component {
     }
 
     componentDidMount() {
-        fetch("http://5a5d22fad6221a0012962d50.mockapi.io/test/user/")
-            .then(response => response.json())
-            .then(responseJson => {
-                this.setState(
-                    {
-                        isLoading: false,
-                        markers: responseJson
-                    },
-                    function() {}
-                );
-            })
-            .catch(error => {
-                console.error(error);
-            })
-            .done();
-
-        this.init_user();
+        this.getMarkers();
         this.initRequestionLocation();
         this._getLocationAsync();
     }
@@ -56,69 +40,12 @@ export default class FanMap extends Component {
         });
     };
 
-    init_user = async () => {
-        const id = await AsyncStorage.getItem("api_id");
-        this.setState({
-            user_id: id
-        });
-    };
-
-    getUpdatedUsers() {
-        fetch("http://5a5d22fad6221a0012962d50.mockapi.io/test/user/")
-            .then(response => response.json())
-            .then(responseJson => {
-                this.setState(
-                    {
-                        isLoading: false,
-                        markers: responseJson
-                    },
-                    function() {}
-                );
-            })
-            .catch(error => {
-                console.error(error);
-            })
-            .done();
-    }
-
-    updateLocation(newLongitude, newLatitude) {
-        fetch(
-            "http://5a5d22fad6221a0012962d50.mockapi.io/test/user/" + this.state.user_id,
-            {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    longitude: newLongitude,
-                    latitude: newLatitude
-                })
-            }
-        );
-    }
-
-    calculateDistance = (lat1, lon1, lat2, lon2) => {
-        if (lat1 == null || lon1 == null) return 0;
-        const toRadians = angle => {
-            return angle * Math.PI / 180;
-        };
-
-        var R = 6371e3; // metres
-        var phi1 = toRadians(lat1);
-        var phi2 = toRadians(lat2);
-        var deltaPhi = toRadians(lat2 - lat1);
-        var deltaLambda = toRadians(lon2 - lon1);
-
-        var a =
-            Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
-            Math.cos(phi1) *
-                Math.cos(phi2) *
-                Math.sin(deltaLambda / 2) *
-                Math.sin(deltaLambda / 2);
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-        var d = R * c;
-        return d;
+    getMarkers = async () => {
+        var notable = await getNotable();
+        markers = await getRelatedUsers(notable);
+        this.setState ({
+            markers: markers
+        })
     };
 
     _getLocationAsync() {
@@ -132,15 +59,15 @@ export default class FanMap extends Component {
                 };
 
                 if (
-                    this.calculateDistance(
+                    calculateDistance(
                         this.state.latitude,
                         this.state.longitude,
                         region.latitude,
                         region.longitude
                     ) >= 0.003048
                 ) {
-                    this.updateLocation(region.longitude, region.latitude);
-                    this.getUpdatedUsers();
+                    updateApiUser({latitude: region.latitude, longitude: region.longitude});
+                    this.getMarkers();
                 }
 
                 this.setState({
