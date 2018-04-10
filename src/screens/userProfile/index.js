@@ -22,15 +22,15 @@ export default class UserProfile extends Component {
         super(props);
         this.state = {
             nickname: "",
-            lat: "",
-            long: "",
+            location: "",
             notables: "",
             blurb: "",
-            profileUrl: ""
+            profileUrl: undefined,
+            chat_id: ""
         };
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         this.props = {
             ...this.props,
             ...this.props.navigation.state.params
@@ -38,28 +38,45 @@ export default class UserProfile extends Component {
 
         this.setState({
             nickname: this.props.nickname,
-            lat: this.props.lat,
-            long: this.props.long,
             notables: this.props.notables,
             blurb: this.props.blurb,
-            profileUrl: this.props.profileUrl
+            profileUrl: this.props.profileUrl,
+            chat_id: this.props.chat_id
         });
-        /*
+
         this.setState({
-            nickname: "Mike",
-            location: "Ypsi, Mi",
-            notables:
-                "Beyonce, ICP, Elvis, Sammy Davis Jr, Pikachu, Rocky, Chewbacca, R2D2",
-            blurb:
-                "Hello World how are you today I hope you are good. I am doing good too",
-            profileUrl:
-                "https://static.boredpanda.com/blog/wp-content/uploads/2015/09/post-the-happiest-dogs-who-show-the-best-smiles-18__700.jpg"
-        });*/
+            location: await this.convertLatLong(this.props.lat, this.props.long)
+        });
     }
 
-    _logout = async () => {
-        await logoutSendBird();
-        await logout(this.props.navigation);
+    convertLatLong = (lat, long) => {
+        const api = "***REMOVED***";
+
+        return fetch(
+            "https://maps.googleapis.com/maps/api/geocode/json?address=" +
+                lat +
+                "," +
+                long +
+                "&key=" +
+                api
+        )
+            .then(response => response.json())
+            .then(responseJson => {
+                const results = responseJson.results;
+                for (let i = 0; i < results.length; ++i) {
+                    let types = results[i].types;
+                    if (types.includes("locality")) {
+                        return results[i].formatted_address;
+                    }
+                }
+            });
+    };
+
+    _openChat = async () => {
+        this.props.navigation.navigate("ChatIndiv", {
+            channelUser: this.state.chat_id,
+            otherUser: this.state.nickname
+        });
     };
 
     render() {
@@ -107,8 +124,8 @@ export default class UserProfile extends Component {
                         </Form>
                     </View>
                     <View style={styles.containerStyle}>
-                        <Button block onPress={() => this._logout()}>
-                            <Text>Log Out</Text>
+                        <Button block onPress={() => this._openChat()}>
+                            <Text>Chat</Text>
                         </Button>
                     </View>
                 </Content>

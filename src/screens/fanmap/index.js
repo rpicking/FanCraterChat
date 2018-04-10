@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, Image, AsyncStorage } from "react-native";
 import Permissions from "react-native-permissions";
 import MapView from "react-native-maps";
 import { Content, Icon, Button, Container } from "native-base";
-import {updateApiUser, getRelatedUsers, getNotable} from "../../actions/apiActions";
+import { updateApiUser, getRelatedUsers, getNotable } from "../../actions/apiActions";
 import { calculateDistance } from "../../helpers/helpers";
 
 import styles from "./style";
@@ -26,7 +26,26 @@ export default class FanMap extends Component {
         };
     }
 
+    componentWillUnmount() {
+        this.listener.remove();
+    }
+
     componentDidMount() {
+        this.listener = this.props.navigation.addListener("didFocus", () => {
+            navigator.geolocation.getCurrentPosition(
+                position => {
+                    region = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        latitudeDelta: 0.00922 * 1.5,
+                        longitudeDelta: 0.00421 * 1.5
+                    };
+                    this.setState({ location: region });
+                },
+                error => this.setState({ error: error.message })
+            );
+        });
+
         this.getUserId();
         this.getMarkers();
         this.initRequestionLocation();
@@ -44,58 +63,56 @@ export default class FanMap extends Component {
 
     getUserId = async () => {
         var id = await AsyncStorage.getItem("api_id");
-        this.setState ({
+        this.setState({
             user_id: id
-        })
+        });
     };
 
     getMarkers = async () => {
         var notable = await getNotable();
         markers = await getRelatedUsers(notable);
-        this.setState ({
+        this.setState({
             markers: markers
-        })
+        });
     };
 
     renderChatButton(userid, chat_id) {
-        if (userid == this.state.user_id)
-            return null;
+        if (userid == this.state.user_id) return null;
         else {
             return (
                 <Button
-                style={{ backgroundColor: "#000" }}
-                onPress={() =>
-                    this.props.navigation.navigate("ChatIndiv", {
-                        channelId: chat_id
-                    })
-                }
+                    style={{ backgroundColor: "#000" }}
+                    onPress={() =>
+                        this.props.navigation.navigate("ChatIndiv", {
+                            channelId: chat_id
+                        })
+                    }
                 >
-                <Text
-                    style={{
-                        marginLeft: 50,
-                        marginRight: 50,
-                        color: "#ffffff"
-                    }}
-                >
-                    Chat
-                </Text>
+                    <Text
+                        style={{
+                            marginLeft: 50,
+                            marginRight: 50,
+                            color: "#ffffff"
+                        }}
+                    >
+                        Chat
+                    </Text>
                 </Button>
-            )
+            );
         }
     }
 
     goToProfile(nickname, lat, long, blurb, notables, profileUrl, chatId) {
         this.props.navigation.navigate("UserProfile", {
-            nickname: nickname, 
-            lat: lat, 
-            long: long, 
-            notables: notables, 
-            blurb: blurb, 
-            profileUrl: profileUrl, 
+            nickname: nickname,
+            lat: lat,
+            long: long,
+            notables: notables,
+            blurb: blurb,
+            profileUrl: profileUrl,
             chat_id: chatId
         });
     }
-
 
     _getLocationAsync() {
         navigator.geolocation.watchPosition(
@@ -115,7 +132,10 @@ export default class FanMap extends Component {
                         region.longitude
                     ) >= 0.003048
                 ) {
-                    updateApiUser({latitude: region.latitude, longitude: region.longitude});
+                    updateApiUser({
+                        latitude: region.latitude,
+                        longitude: region.longitude
+                    });
                     this.getMarkers();
                 }
 
@@ -156,7 +176,17 @@ export default class FanMap extends Component {
                             >
                                 <MapView.Callout
                                     style={{ padding: 5, height: 200, width: 200 }}
-                                    onPress={() => {this.goToProfile(marker.latitude, marker.longitude, marker.notable, marker.blurb, marker.notable, marker.profileUrl, marker.chat_id)}}
+                                    onPress={() => {
+                                        this.goToProfile(
+                                            marker.nickname,
+                                            marker.latitude,
+                                            marker.longitude,
+                                            marker.blurb,
+                                            marker.notable,
+                                            marker.image,
+                                            marker.chat_id
+                                        );
+                                    }}
                                 >
                                     <View
                                         style={{
@@ -166,10 +196,10 @@ export default class FanMap extends Component {
                                         }}
                                     >
                                         <View style={{ paddingRight: 5 }}>
-                                                <Image
-                                                    style={{ width: 50, height: 50 }}
-                                                    source={{ uri: marker.image }}
-                                                />
+                                            <Image
+                                                style={{ width: 50, height: 50 }}
+                                                source={{ uri: marker.image }}
+                                            />
                                         </View>
                                     </View>
                                     <View
@@ -212,8 +242,7 @@ export default class FanMap extends Component {
                                             flexDirection: "column",
                                             alignItems: "center"
                                         }}
-                                    >
-                                    </View>
+                                    />
                                 </MapView.Callout>
                             </MapView.Marker>
                         ))}

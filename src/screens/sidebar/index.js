@@ -33,20 +33,10 @@ const datas = [
         bg: "#C5F442"
     },
     {
-        name: "User Profile",
-        route: "UserProfile",
-        params: {
-            nickname: "Mike",
-            location: "Ypsi, Mi",
-            notables:
-                "Beyonce, ICP, Elvis, Sammy Davis Jr, Pikachu, Rocky, Chewbacca, R2D2",
-            blurb:
-                "Hello World how are you today I hope you are good. I am doing good too",
-            profileUrl:
-                "https://static.boredpanda.com/blog/wp-content/uploads/2015/09/post-the-happiest-dogs-who-show-the-best-smiles-18__700.jpg"
-        },
-        type: "FontAwesome",
-        icon: "user",
+        name: "Settings",
+        route: "Settings",
+        type: "Feather",
+        icon: "settings",
         bg: "#C5F442"
     }
 ];

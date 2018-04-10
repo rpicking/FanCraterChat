@@ -150,7 +150,7 @@ export const sendMessage = message => {
 // returns newest n messages from channel n = limit
 //     n defaults to 30
 export const getPreviousMessages = limit => {
-    limit = limit || 30;
+    limit = limit || 100;
     return new Promise(function(resolve, reject) {
         messageListQuery.load(limit, true, function(messageList, error) {
             if (error) {
@@ -166,7 +166,7 @@ export const getPreviousMessages = limit => {
 // returns n previous messages from timestamp
 //     n defaults to 30
 export const getPreviousMessagesTimeStamp = (timestamp, limit) => {
-    limit = limit || 30;
+    limit = limit || 100;
     return new Promise(function(resolve, reject) {
         messageListQuery.prev(timestamp, limit, null, function(messageList, error) {
             if (error) {

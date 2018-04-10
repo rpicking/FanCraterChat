@@ -82,11 +82,8 @@ export const loginSavedUser = async () => {
     const nickname = current_user_info.nickname;
     let picture = current_user_info.picture;
     if (cur_metadata.hasOwnProperty("picture")) {
-        console.log("picture");
         picture = cur_metadata.picture;
     }
-    console.log(nickname);
-    console.log(picture);
     await updateUser(nickname, picture);
 };
 

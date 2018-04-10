@@ -12,7 +12,8 @@ import {
     getchannelHandler,
     getOtherUserNickname,
     sendMessage,
-    isCurrentChannel
+    isCurrentChannel,
+    getChannelByID
 } from "../../actions/sendbirdActions";
 
 export default class ChatIndiv extends Component {
@@ -30,10 +31,14 @@ export default class ChatIndiv extends Component {
             ...this.props.navigation.state.params
         };
 
-        // passed prop test
-        console.log(this.props.channelId);
+        // coming from user page
+        if (this.props.hasOwnProperty("channelUser")) {
+            this.setState({ otherUser: this.props.otherUser });
+            await getChannelByID(this.props.channelUser);
+        } else {
+            await getChannelByURL(this.props.channelId);
+        }
 
-        await getChannelByURL(this.props.channelId);
         this.setState({ otherUser: getOtherUserNickname() });
 
         let sendBirdMessages = await getPreviousMessages();
