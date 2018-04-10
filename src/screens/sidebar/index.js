@@ -125,29 +125,6 @@ export default class SideBar extends Component {
                             <Text style={styles.text}>Logout</Text>
                         </Left>
                     </ListItem>
-                    <ListItem
-                        button
-                        noBorder
-                        onPress={() => {
-                            const pic =
-                                "https://i.pinimg.com/originals/be/dc/bf/bedcbfe81a37428c0ce5532ec1dc1f10.jpg";
-                            setMetadata({ picture: pic });
-                        }}
-                    >
-                        <Left>
-                            <Icon
-                                active
-                                name="logout"
-                                type="MaterialCommunityIcons"
-                                style={{
-                                    color: "#777",
-                                    fontSize: 26,
-                                    width: 30
-                                }}
-                            />
-                            <Text style={styles.text}>Update</Text>
-                        </Left>
-                    </ListItem>
                 </Content>
             </Container>
         );

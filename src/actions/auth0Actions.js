@@ -70,7 +70,6 @@ export const getUserInfo = async () => {
     }
     current_user_info = user_info;
     const user_id = user_info.sub;
-    console.log(user_info);
     await AsyncStorage.setItem("user_id", user_id);
     return user_info;
 };

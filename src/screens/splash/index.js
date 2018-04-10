@@ -32,11 +32,6 @@ export default class Splash extends Component {
         if (accessToken) {
             const user_info = await getUserInfo();
             await loginSavedUser();
-            //await getMetadata();
-
-            // login sendbird user known
-            //await loginSendBird(user_info.sub);
-            //await updateUser(user_info.nickname, user_info.picture);
 
             setTimeout(this.openFanMap, 1200);
         } else {
@@ -58,9 +53,6 @@ export default class Splash extends Component {
         this.setState({ loggedIn: true });
         const user_info = await launchLogin();
         if (user_info) {
-            // login sendbird if user not already known
-            //await createUser(user_info.sub, user_info.nickname, user_info.picture);
-
             this.openFanMap();
         } else {
             this.setState({ loggedIn: false });

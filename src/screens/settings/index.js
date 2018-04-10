@@ -16,9 +16,12 @@ import {
     Content,
     ListItem,
     Radio,
-    Right
+    Right,
+    Card,
+    CardItem,
+    Image
 } from "native-base";
-//import About from "./screens/About";
+import About from "./about";
 //import AppLocation from "./screens/AppLocation";
 
 export default class Settings extends Component {
@@ -78,7 +81,9 @@ export default class Settings extends Component {
                                 <Text>About</Text>
                             </TabHeading>
                         }
-                    />
+                    >
+                        <About />
+                    </Tab>
                 </Tabs>
             </Container>
         );
