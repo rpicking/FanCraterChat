@@ -103,7 +103,6 @@ export const getUser = async () => {
     return new Promise(async function(resolve, reject) {
         let request = new XMLHttpRequest();
         let api_id = await AsyncStorage.getItem("api_id");
-        console.log(api_id);
         let url = "http://5a5d22fad6221a0012962d50.mockapi.io/test/user/" + api_id;
 
         request.onreadystatechange = function() {

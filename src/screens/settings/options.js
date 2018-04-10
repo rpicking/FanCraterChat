@@ -11,7 +11,8 @@ import {
     Form,
     Item,
     Input,
-    Picker
+    Picker,
+    Icon
 } from "native-base";
 
 export default class Options extends React.Component {
@@ -19,15 +20,37 @@ export default class Options extends React.Component {
         super(props);
         this.state = {
             zipSelected: false,
-            selected: undefined
+            selected: undefined,
+            success: false,
+            error: false,
+            zip: "",
+            icon: ""
         };
     }
 
-    onValueChange(value) {
+    async componentDidMount() {
+        const mode = await AsyncStorage.getItem("zipCodeMode");
+        if (mode)
+            this.setState({
+                zip: mode,
+                zipSelected: true,
+                success: true,
+                selected: "key1",
+                icon: "checkmark-circle"
+            });
+    }
+
+    async onValueChange(value) {
         this.setState({ selected: value });
         if (value === "key0") {
             this.setState({ zipSelected: false });
-        } else this.setState({ zipSelected: true });
+            //this.setState({ success: false });
+            await AsyncStorage.setItem("zipCodeMode", "");
+        } else {
+            this.setState({ zipSelected: true });
+            console.log(this.state.zip);
+            //this.setState({ success: false });
+        }
     }
 
     render() {
@@ -38,7 +61,9 @@ export default class Options extends React.Component {
                         <Text style={{ margin: 15 }}>
                             How would you like to find people?
                         </Text>
-                        <Form style={{ marginLeft: 10, marginRight: 15 }}>
+                        <Form
+                            style={{ marginLeft: 10, marginRight: 15, paddingBottom: 10 }}
+                        >
                             <Picker
                                 iosHeader="Select one"
                                 mode="dropdown"
@@ -49,14 +74,44 @@ export default class Options extends React.Component {
                                 <Item label="Zip Code" value="key1" />
                             </Picker>
                             {this.state.zipSelected ? (
-                                <Input
-                                    value={this.state.text}
-                                    maxLength={5}
-                                    keyboardType="numeric"
-                                    onEndEditing={async text => {
-                                        await AsyncStorage.setItem("zipCodeMode", text);
-                                    }}
-                                />
+                                <Item
+                                    success={this.state.success}
+                                    error={this.state.error}
+                                >
+                                    <Input
+                                        value={this.state.zip}
+                                        maxLength={5}
+                                        style={{
+                                            borderRadius: 4,
+                                            borderWidth: 0.5,
+                                            borderColor: "#d6d7da",
+                                            margin: 10
+                                        }}
+                                        keyboardType="numeric"
+                                        onChangeText={async text => {
+                                            if (text.length === 5) {
+                                                this.setState({
+                                                    success: true,
+                                                    error: false,
+                                                    icon: "checkmark-circle"
+                                                });
+                                                console.log(this.state.zip);
+                                                await AsyncStorage.setItem(
+                                                    "zipCodeMode",
+                                                    text
+                                                );
+                                            } else {
+                                                this.setState({
+                                                    success: false,
+                                                    error: true
+                                                });
+                                                this.setState({ icon: "close-circle" });
+                                            }
+                                            this.setState({ zip: text });
+                                        }}
+                                    />
+                                    <Icon name={this.state.icon} />
+                                </Item>
                             ) : (
                                 undefined
                             )}

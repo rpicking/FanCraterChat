@@ -178,7 +178,6 @@ export default class ChatIndiv extends Component {
                     onPressAvatar={() => this.goToProfile(this.state.otherChatId)}
                     keyboardShouldPersistTaps={"handled"}
                     onInputTextChanged={text => {
-                        console.log(text.length, "a");
                         if (text !== "") {
                             startTyping();
                         } else stopTyping();
