@@ -174,9 +174,12 @@ export default class FanMap extends Component {
                                             alignContent: "flex-start"
                                         }}
                                     >
-                                        <View style={{}}>
+                                        <View>
                                             <Text
-                                                style={{ color: "#00bcd4", fontSize: 40 }}
+                                                style={{
+                                                    color: "#00bcd4",
+                                                    fontSize: 25
+                                                }}
                                             >
                                                 {marker.nickname}
                                             </Text>
