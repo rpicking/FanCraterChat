@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, Image, AsyncStorage } from "react-native";
 import Permissions from "react-native-permissions";
 import MapView from "react-native-maps";
 import { Content, Icon, Button, Container } from "native-base";
-import {updateApiUser, getRelatedUsers, getNotable} from "../../actions/apiActions";
+import { updateApiUser, getRelatedUsers, getNotable } from "../../actions/apiActions";
 import { calculateDistance } from "../../helpers/helpers";
 
 import styles from "./style";
@@ -44,46 +44,45 @@ export default class FanMap extends Component {
 
     getUserId = async () => {
         var id = await AsyncStorage.getItem("api_id");
-        this.setState ({
+        this.setState({
             user_id: id
-        })
+        });
     };
 
     getMarkers = async () => {
         var notable = await getNotable();
         markers = await getRelatedUsers(notable);
-        this.setState ({
+        this.setState({
             markers: markers
-        })
+        });
     };
 
     renderChatButton(userid, chat_id) {
-        if (userid == this.state.user_id)
-            return null;
+        if (userid == this.state.user_id) return null;
         else {
             return (
                 <Button
-                style={{ backgroundColor: "#000" }}
-                onPress={() =>
-                    this.props.navigation.navigate("ChatIndiv", {
-                        channelId: chat_id
-                    })
-                }
-                >
-                <Text
-                    style={{
-                        marginLeft: 50,
-                        marginRight: 50,
-                        color: "#ffffff"
+                    style={{ backgroundColor: "#000" }}
+                    onPress={() => {
+                        console.log("press");
+                        this.props.navigation.navigate("ChatIndiv", {
+                            channelId: chat_id
+                        });
                     }}
                 >
-                    Chat
-                </Text>
+                    <Text
+                        style={{
+                            marginLeft: 50,
+                            marginRight: 50,
+                            color: "#ffffff"
+                        }}
+                    >
+                        Chat
+                    </Text>
                 </Button>
-            )
+            );
         }
     }
-
 
     _getLocationAsync() {
         navigator.geolocation.watchPosition(
@@ -103,7 +102,10 @@ export default class FanMap extends Component {
                         region.longitude
                     ) >= 0.003048
                 ) {
-                    updateApiUser({latitude: region.latitude, longitude: region.longitude});
+                    updateApiUser({
+                        latitude: region.latitude,
+                        longitude: region.longitude
+                    });
                     this.getMarkers();
                 }
 
@@ -144,6 +146,7 @@ export default class FanMap extends Component {
                             >
                                 <MapView.Callout
                                     style={{ padding: 5, height: 200, width: 200 }}
+                                    onPress={() => console.log("butts")}
                                 >
                                     <View
                                         style={{
@@ -209,7 +212,10 @@ export default class FanMap extends Component {
                                         }}
                                     >
                                         <View style={{ alignItems: "center" }}>
-                                           {this.renderChatButton(marker.id, marker.chat_id)} 
+                                            {this.renderChatButton(
+                                                marker.id,
+                                                marker.chat_id
+                                            )}
                                         </View>
                                     </View>
                                 </MapView.Callout>

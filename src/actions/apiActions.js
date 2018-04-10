@@ -47,7 +47,7 @@ export const updateApiUser = (metadata, api_id) => {
     });
 };
 
-export const getRelatedUsers = async (notable) => {
+export const getRelatedUsers = async notable => {
     return new Promise(async function(resolve, reject) {
         let request = new XMLHttpRequest();
         let url = "http://5a5d22fad6221a0012962d50.mockapi.io/test/user/";
@@ -65,7 +65,6 @@ export const getRelatedUsers = async (notable) => {
         request.send();
     });
 };
-
 
 export const getNotable = async () => {
     return new Promise(async function(resolve, reject) {
@@ -87,16 +86,13 @@ export const getNotable = async () => {
 };
 
 function filterUsers(response, notable) {
-    var count = 0;
-    for (var user in response)
-    {
-        if (response[user].notable != notable)
-        {
-            response[user].latitude = "";
-            response[user].longitude = "";
+    let tempArr = [];
+    for (var user in response) {
+        let temp = response[user];
+        if (notable === temp.notable) {
+            tempArr.push(temp);
         }
-        count++;
     }
-    
-    return response;
+
+    return tempArr;
 }
