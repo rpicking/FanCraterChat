@@ -14,6 +14,7 @@ export default class FanMap extends Component {
         errorMessage: null,
         longitude: null,
         latitude: null,
+        id: null
     };
 
     constructor(props) {
@@ -26,6 +27,7 @@ export default class FanMap extends Component {
     }
 
     componentDidMount() {
+        this.getUserId();
         this.getMarkers();
         this.initRequestionLocation();
         this._getLocationAsync();
@@ -40,6 +42,13 @@ export default class FanMap extends Component {
         });
     };
 
+    getUserId = async () => {
+        var id = await AsyncStorage.getItem("api_id");
+        this.setState ({
+            user_id: id
+        })
+    };
+
     getMarkers = async () => {
         var notable = await getNotable();
         markers = await getRelatedUsers(notable);
@@ -47,6 +56,34 @@ export default class FanMap extends Component {
             markers: markers
         })
     };
+
+    renderChatButton(userid, chat_id) {
+        if (userid == this.state.user_id)
+            return null;
+        else {
+            return (
+                <Button
+                style={{ backgroundColor: "#000" }}
+                onPress={() =>
+                    this.props.navigation.navigate("ChatIndiv", {
+                        channelId: chat_id
+                    })
+                }
+                >
+                <Text
+                    style={{
+                        marginLeft: 50,
+                        marginRight: 50,
+                        color: "#ffffff"
+                    }}
+                >
+                    Chat
+                </Text>
+                </Button>
+            )
+        }
+    }
+
 
     _getLocationAsync() {
         navigator.geolocation.watchPosition(
@@ -169,24 +206,7 @@ export default class FanMap extends Component {
                                         }}
                                     >
                                         <View style={{ alignItems: "center" }}>
-                                            <Button
-                                                style={{ backgroundColor: "#000" }}
-                                                onPress={() =>
-                                                    this.props.navigation.navigate(
-                                                        "DrawerOpen"
-                                                    )
-                                                }
-                                            >
-                                                <Text
-                                                    style={{
-                                                        marginLeft: 50,
-                                                        marginRight: 50,
-                                                        color: "#ffffff"
-                                                    }}
-                                                >
-                                                    Chat
-                                                </Text>
-                                            </Button>
+                                           {this.renderChatButton(marker.id, marker.chat_id)} 
                                         </View>
                                     </View>
                                 </MapView.Callout>
