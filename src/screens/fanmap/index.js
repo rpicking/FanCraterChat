@@ -166,18 +166,10 @@ export default class FanMap extends Component {
                                         }}
                                     >
                                         <View style={{ paddingRight: 5 }}>
-                                            <Button
-                                                onPress={() =>
-                                                    this.props.navigation.navigate(
-                                                        "DrawerOpen"
-                                                    )
-                                                }
-                                            >
                                                 <Image
                                                     style={{ width: 50, height: 50 }}
                                                     source={{ uri: marker.image }}
                                                 />
-                                            </Button>
                                         </View>
                                     </View>
                                     <View
