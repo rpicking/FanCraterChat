@@ -84,7 +84,7 @@ export default class FanMap extends Component {
         }
     }
 
-    goToProfile(nickname, lat, long, blurb, profileUrl, chatId) {
+    goToProfile(nickname, lat, long, blurb, notables, profileUrl, chatId) {
         this.props.navigation.navigate("UserProfile", {
             nickname: nickname, 
             lat: lat, 
@@ -156,7 +156,7 @@ export default class FanMap extends Component {
                             >
                                 <MapView.Callout
                                     style={{ padding: 5, height: 200, width: 200 }}
-                                    onPress={goToProfile(marker.latitude, marker.longitude, marker.notable, marker.blurb, marker.profileUrl, marker.chat_id)}
+                                    onPress={() => {this.goToProfile(marker.latitude, marker.longitude, marker.notable, marker.blurb, marker.notable, marker.profileUrl, marker.chat_id)}}
                                 >
                                     <View
                                         style={{
