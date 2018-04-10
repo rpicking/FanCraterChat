@@ -51,11 +51,17 @@ export const launchLogin = async () => {
 // returns user_info id = user_info.sub
 export const getUserInfo = async () => {
     const accessToken = await AsyncStorage.getItem("accessToken");
-
-    const user_info = await auth0.auth.userInfo({
-        token: accessToken
-    });
-
+    let user_info;
+    try {
+        user_info = await auth0.auth.userInfo({
+            token: accessToken
+        });
+    } catch (e) {
+        console.log(e);
+        await getNewAccessToken();
+        return await getUserInfo();
+    }
+    current_user_info = user_info;
     const user_id = user_info.sub;
     await AsyncStorage.setItem("user_id", user_id);
     return user_info;
