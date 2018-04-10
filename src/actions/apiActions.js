@@ -30,7 +30,7 @@ export const createApiUser = user_info => {
 export const updateApiUser = (metadata, api_id) => {
     return new Promise(async function(resolve, reject) {
         let request = new XMLHttpRequest();
-        
+
         await AsyncStorage.setItem("latitude", String(metadata.latitude));
         await AsyncStorage.setItem("longitude", String(metadata.longitude));
         api_id = api_id || (await AsyncStorage.getItem("api_id"));
@@ -98,3 +98,47 @@ function filterUsers(response, notable) {
 
     return tempArr;
 }
+
+export const getUser = async () => {
+    return new Promise(async function(resolve, reject) {
+        let request = new XMLHttpRequest();
+        let api_id = await AsyncStorage.getItem("api_id");
+        console.log(api_id);
+        let url = "http://5a5d22fad6221a0012962d50.mockapi.io/test/user/" + api_id;
+
+        request.onreadystatechange = function() {
+            if (this.readyState === 4 && this.status === 200) {
+                let response = JSON.parse(this.responseText);
+                return resolve(response);
+            }
+        };
+
+        request.open("GET", url, true);
+        request.setRequestHeader("Content-type", "application/json");
+        request.send();
+    });
+};
+
+export const getUserByChatId = async chat_id => {
+    return new Promise(async function(resolve, reject) {
+        let request = new XMLHttpRequest();
+        let url = "http://5a5d22fad6221a0012962d50.mockapi.io/test/user/";
+
+        request.onreadystatechange = function() {
+            if (this.readyState === 4 && this.status === 200) {
+                let response = JSON.parse(this.responseText);
+                console.log(response);
+                for (let user in response) {
+                    let temp = response[user];
+                    if (temp.chat_id === chat_id) {
+                        return resolve(temp);
+                    }
+                }
+            }
+        };
+
+        request.open("GET", url, true);
+        request.setRequestHeader("Content-type", "application/json");
+        request.send();
+    });
+};

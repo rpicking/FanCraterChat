@@ -25,6 +25,7 @@ import {
 } from "../../actions/sendbirdActions";
 
 import styles from "./styles";
+import { getUser, getUserByChatId } from "../../actions/apiActions";
 
 export default class ChatOverview extends Component {
     constructor(props) {
@@ -64,8 +65,18 @@ export default class ChatOverview extends Component {
         });
     };
 
-    goToProfile = api_id => {
-        console.log(api_id);
+    goToProfile = async chat_id => {
+        console.log(chat_id);
+        const user_info = await getUserByChatId(chat_id);
+        this.props.navigation.navigate("UserProfile", {
+            nickname: user_info.nickname,
+            lat: user_info.latitude,
+            long: user_info.longitude,
+            notables: user_info.notable,
+            blurb: user_info.blurb,
+            profileUrl: user_info.image,
+            chat_id: user_info.chat_id
+        });
     };
 
     _convertTime = lastMessage => {
@@ -136,13 +147,12 @@ export default class ChatOverview extends Component {
                             onPress={() => this.props.navigation.navigate("DrawerOpen")}
                         >
                             <Icon
-                            name={"menu"}
-                            type={"Entypo"}
-                            style={{
-                                color: "#777",
-                                fontSize: 32,
-                                width: 30
-                            }}
+                                name={"menu"}
+                                type={"Entypo"}
+                                style={{
+                                    fontSize: 32,
+                                    width: 30
+                                }}
                             />
                         </Button>
                     </Right>

@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, Image, AsyncStorage } from "react-native";
 import Permissions from "react-native-permissions";
 import MapView from "react-native-maps";
 import { Content, Icon, Button, Container, Toast } from "native-base";
-import {updateApiUser, getRelatedUsers, getNotable} from "../../actions/apiActions";
+import { updateApiUser, getRelatedUsers, getNotable } from "../../actions/apiActions";
 import { calculateDistance } from "../../helpers/helpers";
 
 import styles from "./style";
@@ -33,7 +33,12 @@ export default class FanMap extends Component {
     componentDidMount() {
         this.listener = this.props.navigation.addListener("didFocus", () => {
             navigator.geolocation.getCurrentPosition(
-                position => {
+                async position => {
+                    updateApiUser({
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
+                    });
+
                     region = {
                         latitude: position.coords.latitude,
                         longitude: position.coords.longitude,
@@ -68,13 +73,6 @@ export default class FanMap extends Component {
         });
     };
 
-    getUserId = async () => {
-        var id = await AsyncStorage.getItem("api_id");
-        this.setState ({
-            user_id: id
-        })
-    };
-
     getMarkers = async () => {
         var notable = await getNotable();
         markers = await getRelatedUsers(notable);
@@ -87,37 +85,11 @@ export default class FanMap extends Component {
         var latitude = await AsyncStorage.getItem("latitude");
         var longitude = await AsyncStorage.getItem("longitude");
         coordinates = {
-            latitude: latitude, 
+            latitude: latitude,
             longitude: longitude
         };
         return coordinates;
     };
-
-    renderChatButton(userid, chat_id) {
-        if (userid == this.state.user_id) return null;
-        else {
-            return (
-                <Button
-                    style={{ backgroundColor: "#000" }}
-                    onPress={() =>
-                        this.props.navigation.navigate("ChatIndiv", {
-                            channelId: chat_id
-                        })
-                    }
-                >
-                    <Text
-                        style={{
-                            marginLeft: 50,
-                            marginRight: 50,
-                            color: "#ffffff"
-                        }}
-                    >
-                        Chat
-                    </Text>
-                </Button>
-            );
-        }
-    }
 
     goToProfile(nickname, lat, long, blurb, notables, profileUrl, chatId) {
         this.props.navigation.navigate("UserProfile", {
@@ -132,25 +104,24 @@ export default class FanMap extends Component {
     }
 
     displayErrorAndSetLocation() {
+        console.log("disp");
         Toast.show({
             text: "Couldn't find current location",
             position: "bottom",
-            buttonText: "Okay", 
+            buttonText: "Okay",
             duration: 5000
         });
-        navigator.geolocation.getCurrentPosition(
-            position => {
-                coordinates = this.getCoordinates();
-                region = {
-                    latitude: coordinates.latitude,
-                    longitude: coordinates.longitude,
-                    latitudeDelta: 0.00922 * 1.5,
-                    longitudeDelta: 0.00421 * 1.5
-                };
-                this.setState({location: region});
-            });  
+        navigator.geolocation.getCurrentPosition(position => {
+            coordinates = this.getCoordinates();
+            region = {
+                latitude: coordinates.latitude,
+                longitude: coordinates.longitude,
+                latitudeDelta: 0.00922 * 1.5,
+                longitudeDelta: 0.00421 * 1.5
+            };
+            this.setState({ location: region });
+        });
     }
-
 
     _getLocationAsync() {
         navigator.geolocation.watchPosition(
@@ -183,17 +154,17 @@ export default class FanMap extends Component {
                     longitude: region.longitude
                 });
             },
-            (error) => {
+            error => {
+                console.log(error);
                 coordinates = this.getCoordinates();
                 if (coordinates.latitude == null || coordinates.longitude == null) {
                     Toast.show({
                         text: "Couldn't find current location",
                         position: "bottom",
-                        buttonText: "Okay", 
+                        buttonText: "Okay",
                         duration: 5000
                     });
-                }
-                else {
+                } else {
                     this.displayErrorAndSetLocation();
                 }
             },
@@ -227,16 +198,21 @@ export default class FanMap extends Component {
                             >
                                 <MapView.Callout
                                     style={{ padding: 5, height: 200, width: 200 }}
-                                    onPress={() => {
-                                        this.goToProfile(
-                                            marker.nickname,
-                                            marker.latitude,
-                                            marker.longitude,
-                                            marker.blurb,
-                                            marker.notable,
-                                            marker.image,
-                                            marker.chat_id
-                                        );
+                                    onPress={async () => {
+                                        if (
+                                            marker.chat_id !==
+                                            (await AsyncStorage.getItem("user_id"))
+                                        ) {
+                                            this.goToProfile(
+                                                marker.nickname,
+                                                marker.latitude,
+                                                marker.longitude,
+                                                marker.blurb,
+                                                marker.notable,
+                                                marker.image,
+                                                marker.chat_id
+                                            );
+                                        }
                                     }}
                                 >
                                     <View

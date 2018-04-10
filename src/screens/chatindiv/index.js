@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, DeviceEventEmitter } from "react-native";
+import { View, DeviceEventEmitter, StyleSheet, Text } from "react-native";
 import { NavigationActions } from "react-navigation";
 import { GiftedChat } from "react-native-gifted-chat";
 import { Container, Header, Left, Button, Body, Icon, Title, Right } from "native-base";
@@ -13,16 +13,24 @@ import {
     getOtherUserNickname,
     sendMessage,
     isCurrentChannel,
-    getChannelByID
+    getChannelByID,
+    getOtherUserChatId,
+    startTyping,
+    stopTyping
 } from "../../actions/sendbirdActions";
+import { getUserByChatId } from "../../actions/apiActions";
 
 export default class ChatIndiv extends Component {
     constructor(props) {
         super(props);
         this.state = {
             otherUser: "",
+            otherChatId: "",
+            typingText: null,
             messages: []
         };
+
+        this.renderFooter = this.renderFooter.bind(this);
     }
 
     async componentDidMount() {
@@ -33,10 +41,14 @@ export default class ChatIndiv extends Component {
 
         // coming from user page
         if (this.props.hasOwnProperty("channelUser")) {
-            this.setState({ otherUser: this.props.otherUser });
+            this.setState({
+                otherUser: this.props.otherUser,
+                otherChatId: this.props.channelUser
+            });
             await getChannelByID(this.props.channelUser);
         } else {
             await getChannelByURL(this.props.channelId);
+            this.setState({ otherChatId: await getOtherUserChatId() });
         }
 
         this.setState({ otherUser: getOtherUserNickname() });
@@ -60,6 +72,14 @@ export default class ChatIndiv extends Component {
                 }));
             }
         };
+
+        ChannelHandler.onTypingStatusUpdated = channel => {
+            if (isCurrentChannel(channel)) {
+                if (channel.isTyping()) {
+                    this.setState({ typingText: "User is typing..." });
+                } else this.setState({ typingText: null });
+            }
+        };
     }
 
     _convertMessage = (msg, index) => {
@@ -77,6 +97,19 @@ export default class ChatIndiv extends Component {
         return temp;
     };
 
+    goToProfile = async chat_id => {
+        const user_info = await getUserByChatId(chat_id);
+        this.props.navigation.navigate("UserProfile", {
+            nickname: user_info.nickname,
+            lat: user_info.latitude,
+            long: user_info.longitude,
+            notables: user_info.notable,
+            blurb: user_info.blurb,
+            profileUrl: user_info.image,
+            chat_id: user_info.chat_id
+        });
+    };
+
     onSend = messages => {
         console.log(messages);
         messages.forEach(message => {
@@ -86,6 +119,17 @@ export default class ChatIndiv extends Component {
             messages: GiftedChat.append(previousState.messages, messages)
         }));
     };
+
+    renderFooter(props) {
+        if (this.state.typingText) {
+            return (
+                <View style={styles.footerContainer}>
+                    <Text style={styles.footerText}>{this.state.typingText}</Text>
+                </View>
+            );
+        }
+        return null;
+    }
 
     render() {
         const { goBack } = this.props.navigation;
@@ -113,7 +157,13 @@ export default class ChatIndiv extends Component {
                                 this.props.navigation.navigate("DrawerOpen");
                             }}
                         >
-                            <Icon name="menu" />
+                            <Icon
+                                style={{
+                                    fontSize: 32,
+                                    width: 30
+                                }}
+                                name="menu"
+                            />
                         </Button>
                     </Right>
                 </Header>
@@ -125,9 +175,30 @@ export default class ChatIndiv extends Component {
                     user={{
                         _id: getCurrentUser()
                     }}
+                    onPressAvatar={() => this.goToProfile(this.state.otherChatId)}
                     keyboardShouldPersistTaps={"handled"}
+                    onInputTextChanged={text => {
+                        console.log(text.length, "a");
+                        if (text !== "") {
+                            startTyping();
+                        } else stopTyping();
+                    }}
+                    renderFooter={this.renderFooter}
                 />
             </Container>
         );
     }
 }
+
+const styles = {
+    footerContainer: {
+        marginTop: 5,
+        marginLeft: 10,
+        marginRight: 10,
+        marginBottom: 10
+    },
+    footerText: {
+        fontSize: 14,
+        color: "#aaa"
+    }
+};

@@ -16,15 +16,18 @@ import {
     Content,
     ListItem,
     Radio,
-    Right,
-    Card,
-    CardItem,
-    Image
+    Right
 } from "native-base";
+
+import Profile from "./profile";
 import About from "./about";
-//import AppLocation from "./screens/AppLocation";
+import Options from "./options";
 
 export default class Settings extends Component {
+    constructor(props) {
+        super(props);
+    }
+
     render() {
         return (
             <Container>
@@ -41,20 +44,19 @@ export default class Settings extends Component {
                         <Title>Settings</Title>
                     </Body>
                     <Right>
-                    <Button
-                        transparent
-                        onPress={() => this.props.navigation.navigate("DrawerOpen")}
-                    >
-                        <Icon
-                        name={"menu"}
-                        type={"Entypo"}
-                        style={{
-                            color: "#777",
-                            fontSize: 32,
-                            width: 30
-                        }}
-                    />
-                    </Button>
+                        <Button
+                            transparent
+                            onPress={() => this.props.navigation.navigate("DrawerOpen")}
+                        >
+                            <Icon
+                                name={"menu"}
+                                type={"Entypo"}
+                                style={{
+                                    fontSize: 32,
+                                    width: 30
+                                }}
+                            />
+                        </Button>
                     </Right>
                 </Header>
                 <Tabs>
@@ -65,7 +67,9 @@ export default class Settings extends Component {
                                 <Text>Profile</Text>
                             </TabHeading>
                         }
-                    />
+                    >
+                        <Profile />
+                    </Tab>
                     <Tab
                         heading={
                             <TabHeading>
@@ -73,7 +77,9 @@ export default class Settings extends Component {
                                 <Text>Options</Text>
                             </TabHeading>
                         }
-                    />
+                    >
+                        <Options />
+                    </Tab>
                     <Tab
                         heading={
                             <TabHeading>

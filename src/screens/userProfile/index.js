@@ -11,16 +11,13 @@ import {
     Label,
     Item,
     Thumbnail,
-    Input, 
-    Icon, 
-    Right, 
-    Left, 
-    Body, 
+    Input,
+    Icon,
+    Right,
+    Left,
+    Body,
     Title
 } from "native-base";
-
-import { logout } from "../../actions/auth0Actions";
-import { logoutSendBird } from "../../actions/sendbirdActions";
 
 export default class UserProfile extends Component {
     constructor(props) {
@@ -88,39 +85,40 @@ export default class UserProfile extends Component {
         return (
             <Container>
                 <Content>
-                <Header>
-                    <Left>
-                        <Button
-                            transparent
-                            onPress={() => {
-                                this.props.navigation.pop();
+                    <Header>
+                        <Left>
+                            <Button
+                                transparent
+                                onPress={() => {
+                                    this.props.navigation.pop();
 
-                                this.props.navigation.goBack(null);
-                            }}
-                        >
-                            <Icon name="arrow-back" />
-                        </Button>
-                    </Left>
-                    <Body>
-                        <Title>Profile</Title>
-                    </Body>
-                    <Right>
-                        <Button
-                            transparent
-                            onPress={() => this.props.navigation.navigate("DrawerOpen")}
-                        >
-                            <Icon
-                            name={"menu"}
-                            type={"Entypo"}
-                            style={{
-                                color: "#777",
-                                fontSize: 32,
-                                width: 30
-                            }}
-                        />
-                        </Button>
-                    </Right>
-                </Header>
+                                    this.props.navigation.goBack(null);
+                                }}
+                            >
+                                <Icon name="arrow-back" />
+                            </Button>
+                        </Left>
+                        <Body>
+                            <Title>Profile</Title>
+                        </Body>
+                        <Right>
+                            <Button
+                                transparent
+                                onPress={() =>
+                                    this.props.navigation.navigate("DrawerOpen")
+                                }
+                            >
+                                <Icon
+                                    name={"menu"}
+                                    type={"Entypo"}
+                                    style={{
+                                        fontSize: 32,
+                                        width: 30
+                                    }}
+                                />
+                            </Button>
+                        </Right>
+                    </Header>
                     <View
                         style={{
                             justifyContent: "center",
@@ -162,7 +160,11 @@ export default class UserProfile extends Component {
                         </Form>
                     </View>
                     <View style={styles.containerStyle}>
-                        <Button block onPress={() => this._openChat()}>
+                        <Button
+                            block
+                            style={{ marginLeft: 10, marginRight: 10 }}
+                            onPress={() => this._openChat()}
+                        >
                             <Text>Chat</Text>
                         </Button>
                     </View>

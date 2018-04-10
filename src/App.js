@@ -13,11 +13,11 @@ import Settings from "./screens/settings";
 export const ChatNavigator = StackNavigator(
     {
         ChatOverview: { screen: ChatOverview },
-        UserProfile: { screen: UserProfile },
+
         ChatIndiv: { screen: ChatIndiv }
     },
     {
-        initialRouteName: "ChatOverview",
+        initialRouteName: "",
         headerMode: "none"
     }
 );
@@ -26,7 +26,8 @@ const Drawer = DrawerNavigator(
     {
         FanMap: { screen: FanMap },
         ChatNavigator: { screen: ChatNavigator },
-        Settings: { screen: Settings }
+        Settings: { screen: Settings },
+        UserProfile: { screen: UserProfile }
     },
     {
         contentOptions: {

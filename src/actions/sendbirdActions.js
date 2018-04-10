@@ -8,8 +8,6 @@ let user_id = ""; // current user_id
 let currentChannel = null; // current channel
 let messageListQuery = null; // current channel messagelistquery
 
-console.log("start sendbird");
-
 export const createUser = async (user_id, nickname, profileUrl) => {
     await loginSendBird(user_id);
     await updateUser(nickname, profileUrl);
@@ -51,11 +49,14 @@ export const getOtherUserNickname = () => {
             return currentChannel.members[i].nickname;
         }
     }
-    currentChannel.members.forEach(member => {
-        if (!isCurrentUser(member.userId)) {
-            return member.nickname;
+};
+
+export const getOtherUserChatId = () => {
+    for (let i = 0; i < currentChannel.members.length; ++i) {
+        if (!isCurrentUser(currentChannel.members[i].userId)) {
+            return currentChannel.members[i].userId;
         }
-    });
+    }
 };
 
 export const getchannelHandler = () => {
@@ -124,7 +125,6 @@ export const getChannelList = () => {
                     return reject(error);
                 }
 
-                console.log(channelList);
                 return resolve(channelList);
             });
         });
@@ -140,8 +140,6 @@ export const sendMessage = message => {
                 return reject(error);
             }
 
-            // onSent
-            console.log(response);
             return resolve(response);
         });
     });
@@ -157,7 +155,7 @@ export const getPreviousMessages = limit => {
                 console.error(error);
                 return reject(error);
             }
-            console.log(messageList);
+
             return resolve(messageList);
         });
     });
@@ -173,7 +171,7 @@ export const getPreviousMessagesTimeStamp = (timestamp, limit) => {
                 console.error(error);
                 return reject(error);
             }
-            console.log(messageList);
+
             return resolve(messageList);
         });
     });
@@ -189,4 +187,12 @@ export const logoutSendBird = async () => {
         });
         return reject();
     });
+};
+
+export const startTyping = () => {
+    currentChannel.startTyping();
+};
+
+export const stopTyping = () => {
+    currentChannel.endTyping();
 };
