@@ -11,7 +11,12 @@ import {
     Label,
     Item,
     Thumbnail,
-    Input
+    Input, 
+    Icon, 
+    Right, 
+    Left, 
+    Body, 
+    Title
 } from "native-base";
 
 import { logout } from "../../actions/auth0Actions";
@@ -83,6 +88,39 @@ export default class UserProfile extends Component {
         return (
             <Container>
                 <Content>
+                <Header>
+                    <Left>
+                        <Button
+                            transparent
+                            onPress={() => {
+                                this.props.navigation.pop();
+
+                                this.props.navigation.goBack(null);
+                            }}
+                        >
+                            <Icon name="arrow-back" />
+                        </Button>
+                    </Left>
+                    <Body>
+                        <Title>Profile</Title>
+                    </Body>
+                    <Right>
+                        <Button
+                            transparent
+                            onPress={() => this.props.navigation.navigate("DrawerOpen")}
+                        >
+                            <Icon
+                            name={"menu"}
+                            type={"Entypo"}
+                            style={{
+                                color: "#777",
+                                fontSize: 32,
+                                width: 30
+                            }}
+                        />
+                        </Button>
+                    </Right>
+                </Header>
                     <View
                         style={{
                             justifyContent: "center",

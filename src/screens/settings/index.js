@@ -37,6 +37,22 @@ export default class Settings extends Component {
                     <Body>
                         <Title>Settings</Title>
                     </Body>
+                    <Right>
+                    <Button
+                        transparent
+                        onPress={() => this.props.navigation.navigate("DrawerOpen")}
+                    >
+                        <Icon
+                        name={"menu"}
+                        type={"Entypo"}
+                        style={{
+                            color: "#777",
+                            fontSize: 32,
+                            width: 30
+                        }}
+                    />
+                    </Button>
+                    </Right>
                 </Header>
                 <Tabs>
                     <Tab

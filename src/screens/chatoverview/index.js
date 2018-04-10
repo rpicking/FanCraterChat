@@ -135,7 +135,15 @@ export default class ChatOverview extends Component {
                             transparent
                             onPress={() => this.props.navigation.navigate("DrawerOpen")}
                         >
-                            <Icon name="menu" />
+                            <Icon
+                            name={"menu"}
+                            type={"Entypo"}
+                            style={{
+                                color: "#777",
+                                fontSize: 32,
+                                width: 30
+                            }}
+                            />
                         </Button>
                     </Right>
                 </Header>

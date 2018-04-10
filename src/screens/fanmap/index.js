@@ -2,8 +2,8 @@ import React, { Component, Platform } from "react";
 import { Text, View, StyleSheet, Image, AsyncStorage } from "react-native";
 import Permissions from "react-native-permissions";
 import MapView from "react-native-maps";
-import { Content, Icon, Button, Container } from "native-base";
-import { updateApiUser, getRelatedUsers, getNotable } from "../../actions/apiActions";
+import { Content, Icon, Button, Container, Toast } from "native-base";
+import {updateApiUser, getRelatedUsers, getNotable} from "../../actions/apiActions";
 import { calculateDistance } from "../../helpers/helpers";
 
 import styles from "./style";
@@ -68,12 +68,29 @@ export default class FanMap extends Component {
         });
     };
 
+    getUserId = async () => {
+        var id = await AsyncStorage.getItem("api_id");
+        this.setState ({
+            user_id: id
+        })
+    };
+
     getMarkers = async () => {
         var notable = await getNotable();
         markers = await getRelatedUsers(notable);
         this.setState({
             markers: markers
         });
+    };
+
+    getCoordinates = async () => {
+        var latitude = await AsyncStorage.getItem("latitude");
+        var longitude = await AsyncStorage.getItem("longitude");
+        coordinates = {
+            latitude: latitude, 
+            longitude: longitude
+        };
+        return coordinates;
     };
 
     renderChatButton(userid, chat_id) {
@@ -114,6 +131,27 @@ export default class FanMap extends Component {
         });
     }
 
+    displayErrorAndSetLocation() {
+        Toast.show({
+            text: "Couldn't find current location",
+            position: "bottom",
+            buttonText: "Okay", 
+            duration: 5000
+        });
+        navigator.geolocation.getCurrentPosition(
+            position => {
+                coordinates = this.getCoordinates();
+                region = {
+                    latitude: coordinates.latitude,
+                    longitude: coordinates.longitude,
+                    latitudeDelta: 0.00922 * 1.5,
+                    longitudeDelta: 0.00421 * 1.5
+                };
+                this.setState({location: region});
+            });  
+    }
+
+
     _getLocationAsync() {
         navigator.geolocation.watchPosition(
             position => {
@@ -130,7 +168,7 @@ export default class FanMap extends Component {
                         this.state.longitude,
                         region.latitude,
                         region.longitude
-                    ) >= 0.003048
+                    ) >= 0.01524
                 ) {
                     updateApiUser({
                         latitude: region.latitude,
@@ -145,7 +183,20 @@ export default class FanMap extends Component {
                     longitude: region.longitude
                 });
             },
-            error => this.setState({ error: error.message }),
+            (error) => {
+                coordinates = this.getCoordinates();
+                if (coordinates.latitude == null || coordinates.longitude == null) {
+                    Toast.show({
+                        text: "Couldn't find current location",
+                        position: "bottom",
+                        buttonText: "Okay", 
+                        duration: 5000
+                    });
+                }
+                else {
+                    this.displayErrorAndSetLocation();
+                }
+            },
             {
                 enableHighAccuracy: true,
                 timeout: 20000,

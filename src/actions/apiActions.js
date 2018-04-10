@@ -30,7 +30,9 @@ export const createApiUser = user_info => {
 export const updateApiUser = (metadata, api_id) => {
     return new Promise(async function(resolve, reject) {
         let request = new XMLHttpRequest();
-
+        
+        await AsyncStorage.setItem("latitude", String(metadata.latitude));
+        await AsyncStorage.setItem("longitude", String(metadata.longitude));
         api_id = api_id || (await AsyncStorage.getItem("api_id"));
         let url = "http://5a5d22fad6221a0012962d50.mockapi.io/test/user/" + api_id;
 
