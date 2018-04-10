@@ -36,11 +36,14 @@ const datas = [
         name: "User Profile",
         route: "UserProfile",
         params: {
+            nickname: "Mike",
+            location: "Ypsi, Mi",
+            notables:
+                "Beyonce, ICP, Elvis, Sammy Davis Jr, Pikachu, Rocky, Chewbacca, R2D2",
+            blurb:
+                "Hello World how are you today I hope you are good. I am doing good too",
             profileUrl:
-                "https://i.pinimg.com/originals/be/dc/bf/bedcbfe81a37428c0ce5532ec1dc1f10.jpg",
-            userID: "name",
-            location: "Michigan",
-            notables: "Bill and Ted"
+                "https://static.boredpanda.com/blog/wp-content/uploads/2015/09/post-the-happiest-dogs-who-show-the-best-smiles-18__700.jpg"
         },
         type: "FontAwesome",
         icon: "user",
