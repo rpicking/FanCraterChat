@@ -190,9 +190,14 @@ export const logoutSendBird = async () => {
 };
 
 export const startTyping = () => {
-    currentChannel.startTyping();
+    try {
+    } catch (e) {
+        currentChannel.startTyping();
+    }
 };
 
 export const stopTyping = () => {
-    currentChannel.endTyping();
+    try {
+        currentChannel.endTyping();
+    } catch (e) {}
 };

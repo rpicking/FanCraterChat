@@ -102,7 +102,7 @@ export default class ChatOverview extends Component {
         let minutes = today - time;
         if (minutes < 60 * 60 * 1000) {
             minutes = Math.floor(minutes / 60 / 1000);
-            if (minutes === 0) return "Now";
+            if (minutes <= 0) return "Now";
             if (minutes === 1) return minutes + " min";
             return minutes + " mins";
         }
