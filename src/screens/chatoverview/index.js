@@ -93,7 +93,7 @@ export default class ChatOverview extends Component {
         ).getTime();
 
         // older than 1 week
-        if (lastWeek > timestamp) {
+        if (lastWeek < timestamp) {
             return time.getMonth() + 1 + "/" + time.getDate();
         } else if (time.toDateString() !== today.toDateString()) {
             // younger than a week not today
