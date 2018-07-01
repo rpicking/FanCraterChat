@@ -1,15 +1,15 @@
 # FanCrater Chat User Manual
 
-###### Table of Contents
+##### Table of Contents
 
-[Walkthrough](#walkthrough)  
-[Problem Statement](#problem-statement)  
-[System Requirements](#system-requirements)  
-[Conceptual Design](#conceptual-design)  
-[User Interface Design](#user-interface-design)  
-[Functional Requirements](#functional-requirements)  
-[Implementation](#implementation)  
-[Testing](#testing) 
+- [Walkthrough](#walkthrough)  
+- [Problem Statement](#problem-statement)  
+- [System Requirements](#system-requirements)  
+- [Conceptual Design](#conceptual-design)  
+- [User Interface Design](#user-interface-design)  
+- [Functional Requirements](#functional-requirements)  
+- [Implementation](#implementation)  
+- [Testing](#testing) 
 
 ## Walkthrough
 
