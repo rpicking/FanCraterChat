@@ -3,53 +3,64 @@
 ###### Table of Contents
 
 [Walkthrough](#walkthrough)  
-[Problem Statement](#problem-statement)
-[System Requirements](#system-requirements)
-[Conceptual Design](#conceptual-design)
-[User Interface Design](#user-interface-design)
-[Functional Requirements](#functional-requirements)
-[Implementation](#implementation)
-[Testing](#testing)
+[Problem Statement](#problem-statement)  
+[System Requirements](#system-requirements)  
+[Conceptual Design](#conceptual-design)  
+[User Interface Design](#user-interface-design)  
+[Functional Requirements](#functional-requirements)  
+[Implementation](#implementation)  
+[Testing](#testing) 
 
 ## Walkthrough
 
 -   When a user selects the FanCrater App from their device, they will be directed to the Splash screen where they can choose to login. On this screen the user does not have access the the drawer and cannot proceed without logging in or already being logged in.
+
     ![Login Screen](https://i.imgur.com/tNJFhkAl.jpg "Login Screen")
 
 -   Once a user has selected to login from the Splash screen, they will be directed to an authorization page. If the user has an account, they can opt to sign in with Google or enter the user information. Once entered, the user will select Log In at the bottom of the screen. On successful login, the user will be directed to the “Map” screen.
+
     ![Auth0 Login](https://i.imgur.com/g1oxHRHl.png "Auth0 Login")
 
 -   If a user does not have an account, they will need to select Sign Up. A user has the option to Sign Up by using google or entering their email and password. Once the information has been entered, the user will click Sign Up at the bottom of the screen. On successful sign up, the user will directed to the “Map” screen.
     ![Auth0 Signup](https://i.imgur.com/mRLLhfsl.png "Auth0 Signup")
 
 -   The Map screen will show up with pins for other users in the same area who share the same Notable. All screens from this point will now have access to the menu drawer. To view it, slide from the left edge of the screen or click the menu button at the top right on all screens. To see more information about a user, select a pin.
+
     ![Map Screen](https://i.imgur.com/oF9haZOl.png "Map Screen")
 
 -   Once a pin is selected, information about that user will pop up on the screen. To view their user profile, simply click anywhere on the card. While the map does show a waypoint for yourself on the map, clicking on your information card will not do anything. The notable that the users share with be listed underneath the username.
+
     ![Map Screen Click On User](https://i.imgur.com/t5LLUlZl.png "Map Screen Click On User")
 
 -   The user profile has information about the user’s location, their notables, and a small blurb about themselves. You may click the back button at the top left to return to the map. To chat with a user, select Chat at the bottom of the screen.
+
     ![Other User Profile](https://i.imgur.com/smXt63Ml.png "Other User Profile")
 
 -   A chat screen will appear when Chat is selected. If you have not previously chatted with the user, no messages appear. If you have chatted with the user before, old messages will appear. If the other user is currently typing you will see a “User is typing…” notification above the input bar. Clicking on the other user’s picture will take you to their profile page. To see all current chats with other users, press the back arrow in the top left-hand corner of the screen.
+
     ![Chat Screen](https://i.imgur.com/R48WEJPl.png "Chat Screen")
 
 -   The chat overview screen shows all open chats with other users. To go back to a previous chat, simply click on that chat to open it. Clicking on one of the profile pictures on the left side of the screen will take you to that users profile page. A user can navigate to other screens on the app by pressing the “menu” button in the top right hand corner or by pressing the back arrow in the top left hand corner.
+
     ![Chat Overview Screen](https://i.imgur.com/xm9kuVLl.png "Chat Overview Screen")
 
 -   When the menu button is pressed from any screen in the app, or the user swipes from the left side of the screen, a drawer will slide out with options to navigate to other areas of the app. From here the user can select to go to the Map, the Chat screen, the Setting screen, or logout which will log you out and return you to the splash screen.
+
     ![Side Drawer](https://i.imgur.com/sBYBsE0l.png "Side Drawer")
 
 -   When the Setting screen is selected from the drawer, the user will be directed to their own profile page. The profile page displays the user ID, avatar, and current location. The user’s notables are listed below the user information as well as a small blurb about the user. A logout button at the bottom of the screen will log the user out of their profile and navigate back to the original login screen.  
     ![Own Profile Screen](https://i.imgur.com/2wZmmjOl.png "Own Profile Screen")
 
 *   Users can select the Options tab from the Settings screen by either swiping on the screen or selecting the tab. Once the Options tab has been selected the user can choose how they would like to share their location to other users that share the same Notables. The default is set to use Current Location, but the user can click the arrow to select Zip Code. To navigate to other areas in the app, the user can select the “menu” at the top right-hand corner of the screen or swiping from the left side to open the navigation drawer. The back arrow, located on the top left-hand corner of the screen will navigate back to the previous screen.
+
     ![Options Screen](https://i.imgur.com/SK2PWCPl.png "Options Screen")
 
 *   If the arrow is selected, the user has the option to update their zip code. A user must enter a 5-digit zip code, otherwise a red circle with an X will appear. Once a 5-digit zip code has been entered, a green check mark will appear indicating that the zip code has been updated.
+
     ![Options Screen Zipcode Error](https://i.imgur.com/hadMN1Ql.png "Options Screen Zipcode Error") ![Options Screen Zipcode Success](https://imgur.com/7yNklu4l.png "Options Screen Zipcode Success")
 
 -   User can select the About tab from the Settings screen by either swiping on the screen or selecting the tab. This screen gives the user information about FanCrater and the app itself.
+
     ![About Screen](https://i.imgur.com/SqzeCjdl.png "About Screen")
 
 -   To logout of the app, a user will either need to open the drawer by pressing the “menu” in the top right-hand corner on any screen or swiping from the left and selecting logout or navigate back to their profile screen in settings and select logout. Logging out will return the user back to the Splash screen.
